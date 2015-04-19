@@ -15,18 +15,20 @@ import map.Engine;
 
 public class GamePanel extends JPanel implements Runnable, KeyListener, MouseListener, MouseMotionListener {
 	private static final long serialVersionUID = 1L;
-	public static final int WIDTH = 960;
-	public static final int HEIGHT = 640;
+	public final int WIDTH = 960;
+	public final int HEIGHT = 640;
 
-	static final int FPS = 60;
-	static final long targetTime = 1000 / FPS;
+	public final int FPS = 60;
+	public final long targetTime = 1000 / FPS;
 	
 	GamePanel self;
 	Thread thread;
 	Thread runningThread;
 	Thread graphicsThread;
 	boolean running;
-	boolean reset;
+	
+	int runningMissedDeadlines;
+	int graphicsMissedDeadlines;
 	
 	Engine engine;
 	BufferedImage image;
@@ -60,6 +62,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 		runningThread = new Thread(new Thread() {
 			@Override
 			public void run() {
+				int missedDeadlines = 0;
 				long start, elapsed, wait;
 				while (running) {
 					start = System.nanoTime();
@@ -72,11 +75,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 						} catch(Exception e) {
 							handleException(e);
 						}
-					}
-					if (reset) {
-						reset = false;
-						engine = new Engine(self);
-					}
+					} else System.out.println("runningThread missed deadline! - Total:" + ++missedDeadlines);
 				}
 			}
 		});
@@ -84,6 +83,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 		graphicsThread = new Thread(new Thread() {
 			@Override
 			public void run() {
+				int missedDeadlines = 0;
 				long start, elapsed, wait;
 				while (running) {
 					start = System.nanoTime();
@@ -96,7 +96,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 						} catch(Exception e) {
 							handleException(e);
 						}
-					}
+					} else System.out.println("graphicsTrhead missed deadline! - Total:" + ++missedDeadlines);
 				}
 			}
 		});
@@ -117,7 +117,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_R) reset = true;
+		engine.keyPressed(e);
 	}
 
 	@Override

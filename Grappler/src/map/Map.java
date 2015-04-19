@@ -27,30 +27,29 @@ public class Map {
 		MapVertex v7 = createMapVertex(new Coordinate(800, 400));
 		MapVertex v8 = createMapVertex(new Coordinate(750, 0));
 
-		createMapEdge(v0, v1, false, 1);
-		createMapEdge(v1, v2, true, 2);
-		createMapEdge(v2, v3, true, 2);
-		createMapEdge(v3, v4, true, 2);
-		createMapEdge(v4, v5, true, 2);
-		createMapEdge(v5, v6, true, 2);
-		createMapEdge(v6, v7, true, 2);
-		createMapEdge(v7, v8, false, 1);
+		createMapEdge(v0, v1, false);
+		createMapEdge(v1, v2, true);
+		createMapEdge(v2, v3, true);
+		createMapEdge(v3, v4, true);
+		createMapEdge(v4, v5, true);
+		createMapEdge(v5, v6, true);
+		createMapEdge(v6, v7, true);
+		createMapEdge(v7, v8, false);
 	}
 	
-	public void update() {
+	public void update(long counter) {
 		//TODO
 	}
 	
-	public void draw(Graphics2D g, Camera camera) {
+	public void draw(Graphics2D g2d, Camera camera) {
+		g2d.setStroke(new BasicStroke(2));
+		g2d.setColor(Color.GREEN);
 		for (MapEdge edge : edges) {
-			g.setColor(edge.isFloor ? Color.GREEN : Color.RED);
-			g.setStroke(new BasicStroke(((edge.strength - 1) * 3) + 1));
-			g.drawLine(camera.xAdjust(edge.line.coor1.x), camera.yAdjust((int)edge.line.coor1.y), camera.xAdjust((int)edge.line.coor2.x), camera.yAdjust((int)edge.line.coor2.y));
+			g2d.drawLine(camera.xAdjust(edge.line.coor1.x), camera.yAdjust((int)edge.line.coor1.y), camera.xAdjust((int)edge.line.coor2.x), camera.yAdjust((int)edge.line.coor2.y));
 		}
-		g.setStroke(new BasicStroke(1));
+		g2d.setColor(Color.YELLOW);
 		for (MapVertex vertex : vertices) {
-			g.setColor(vertex.isGrabbable ? Color.YELLOW : Color.BLUE);
-			g.drawOval(camera.xAdjust(vertex.coordinate.x) - 4, camera.yAdjust(vertex.coordinate.y) - 4, 8, 8);
+			g2d.drawOval(camera.xAdjust(vertex.coordinate.x) - 4, camera.yAdjust(vertex.coordinate.y) - 4, 8, 8);
 		}
 	}
 
@@ -77,8 +76,8 @@ public class Map {
 		return mapVertex;
 	}
 
-	private MapEdge createMapEdge(MapVertex leftVertex, MapVertex rightVertex, boolean isFloor, int strength) {
-		MapEdge mapEdge = new MapEdge(this, leftVertex, rightVertex, isFloor, strength);
+	private MapEdge createMapEdge(MapVertex leftVertex, MapVertex rightVertex, boolean hookable) {
+		MapEdge mapEdge = new MapEdge(this, leftVertex, rightVertex, hookable);
 		leftVertex.rightEdge = mapEdge;
 		rightVertex.leftEdge = mapEdge;
 		edges.add(mapEdge);

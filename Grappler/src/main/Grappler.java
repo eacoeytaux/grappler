@@ -1,5 +1,7 @@
 package main;
 
+import java.awt.Color;
+
 import javax.swing.JFrame;
 
 public class Grappler extends JFrame {
@@ -8,6 +10,7 @@ public class Grappler extends JFrame {
 	public static void main(String[] args) {
 		JFrame window = new JFrame("Grappler");
 		window.setContentPane(new GamePanel());
+		window.setBackground(Color.BLACK);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setResizable(false);
 		window.pack();

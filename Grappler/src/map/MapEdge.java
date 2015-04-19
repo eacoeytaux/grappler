@@ -5,15 +5,13 @@ public class MapEdge {
 	public MapVertex rightVertex;
 	public MapVertex leftVertex;
 	public Line line;
-	public boolean isFloor;
-	public int strength;
+	public boolean hookable;
 
-	public MapEdge(Map map, MapVertex leftVertex, MapVertex rightVertex, boolean isFloor, int strength) {
+	public MapEdge(Map map, MapVertex leftVertex, MapVertex rightVertex, boolean hookable) {
 		this.parent = map;
 		this.leftVertex = leftVertex;
 		this.rightVertex = rightVertex;
 		line = new Line(this.leftVertex.coordinate, this.rightVertex.coordinate);
-		this.isFloor = isFloor;
-		this.strength = strength;
+		this.hookable = hookable;
 	}
 }
