@@ -9,6 +9,7 @@ import java.util.Random;
 import map.AbsBackground;
 
 public class TriangleBackground extends AbsBackground {
+	//
 	final Color[] colorStages = {new Color(0x000000), new Color(0x001933), new Color(0x003366), new Color(0x004C99), new Color(0x0066CC), new Color(0x0080FF), new Color(0x3399FF)};//, new Color(0x62B2FF)};
 	
 	int fallTime = 3;
@@ -72,7 +73,7 @@ public class TriangleBackground extends AbsBackground {
 		int xOffset = this.xOffset;
 		for (int i = 0; i < triangleColNum; i++) {
 			if (random == null) System.out.println("y?");
-			triangles.add(0, new Triangle(random.nextInt(colorStages.length - 3) + 3, random.nextInt(colorChangeTime) + 1, pointUp, xOffset, 0));
+			triangles.add(0, new Triangle(random.nextInt(colorStages.length - 3) + 3, random.nextInt(colorChangeTime - 1) + 1, pointUp, xOffset, 0));
 			
 			if (triangles.size() > 1116) triangles.remove(triangles.size() - 1);
 			
