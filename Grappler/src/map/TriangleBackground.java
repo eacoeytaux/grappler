@@ -60,7 +60,6 @@ public class TriangleBackground extends AbsBackground {
 			triangles.add(0, new Triangle(scheme, random.nextInt(scheme.getLength() - 3) + 3, random.nextInt(colorChangeTime - 1) + 1, pointUp, xOffset, 0)); //adds new triangle to head of ArrayList
 			
 			while (triangles.size() > 1116) {
-				System.out.println("!!!!");
 				triangles.remove(triangles.size() - 1); //removes excess triangles from ArrayList
 			}
 			
