@@ -47,7 +47,7 @@ public class Engine {
 		
 		background.update(counter);
 		map.update(counter);
-		//p1.update(map, counter);
+		p1.update(map, counter);
 		
 		draw();
 	}

@@ -60,13 +60,14 @@ public class Map {
 		
 		for (MapEdge edge : edges) {
 			Coordinate collisionCoor = edge.line.intersection(velLine);
-			if (collisionCoorFinal == null) {
+			if (collisionCoor != null) {
+				System.out.println("hey!");
 				collisionCoorFinal = collisionCoor;
 				break;
 			}
 		}
 		
-		return null;
+		return vel;//new Vector(vel.origin, vel.origin.x - collisionCoorFinal.x, vel.origin.y - collisionCoorFinal.y);
 	}
 
 	/*public Collision getClosestCollision(Player player, Velocity vel, MapEdge edgeIgnore, MapVertex vertexIgnore) {

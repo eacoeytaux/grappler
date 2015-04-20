@@ -13,7 +13,7 @@ import javax.swing.JPanel;
 
 import map.Engine;
 
-public class GamePanel extends JPanel implements Runnable, KeyListener, MouseListener, MouseMotionListener {
+public class GamePanel extends JPanel implements Runnable, KeyListener, MouseListener {
 	private static final long serialVersionUID = 1L;
 	public final int WIDTH = 960;
 	public final int HEIGHT = 640;
@@ -49,7 +49,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 			thread = new Thread(this);
 			addKeyListener(this);
 			addMouseListener(this);
-			addMouseMotionListener(this);
 			thread.start();
 		}
 	}
@@ -142,12 +141,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 
 	@Override
 	public void mouseReleased(MouseEvent e) { }
-
-	@Override
-	public void mouseDragged(MouseEvent e) { }
-
-	@Override
-	public void mouseMoved(MouseEvent e) { }
 	
 	public static void handleException(Exception e) {
 		e.printStackTrace();
