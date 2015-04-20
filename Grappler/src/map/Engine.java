@@ -34,7 +34,10 @@ public class Engine {
 		running = true;
 		counter = 0;
 		camera = new Camera(parentPanel.WIDTH, parentPanel.HEIGHT, parentPanel.WIDTH / 2, parentPanel.HEIGHT / 2);
-		background = new TriangleBackground(parentPanel.WIDTH, parentPanel.HEIGHT, ColorSchemes.getScheme("BLUE"), ColorSchemes.getScheme("RED"));
+
+		background = new SquareWaveBackground(parentPanel.WIDTH, parentPanel.HEIGHT);
+
+		
 		map = new Map();
 		p1 = new Player(Color.ORANGE, new Coordinate(50, 50));
 		reset = false;

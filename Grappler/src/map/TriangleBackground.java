@@ -5,6 +5,8 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import map.AbsBackground;
+
 public class TriangleBackground extends AbsBackground {
 	//stages of colors each triangle goes through in descending order
 	//final Color[] colorStages = {new Color(0x000000), new Color(0x001933), new Color(0x003366), new Color(0x004C99), new Color(0x0066CC), new Color(0x0080FF), new Color(0x3399FF)};//, new Color(0x62B2FF)};
