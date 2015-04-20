@@ -5,6 +5,10 @@ public class Vector {
 	double xDelta;
 	double yDelta;
 	
+	public Vector(Coordinate origin, Coordinate destination) {
+		this(origin, origin.x - destination.x, origin.y - destination.y);
+	}
+	
 	public Vector(Coordinate origin, double xDelta, double yDelta) {
 		this.origin = origin;
 		this.xDelta = xDelta;
@@ -15,5 +19,4 @@ public class Vector {
 		xDelta += other.xDelta;
 		yDelta += other.yDelta;
 	}
-
 }

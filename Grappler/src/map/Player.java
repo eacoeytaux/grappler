@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
+import main.Constants;
+
 public class Player {
 	ArrayList<Coordinate> positionMemory;
 	int positionMemoryFreq = 1;
@@ -16,6 +18,9 @@ public class Player {
 	Coordinate center;
 	Vector vel;
 	Vector gravity;
+
+	MapEdge currentEdge;
+	MapEdge currentVertex;
 
 	double angle; //in radians
 
@@ -35,11 +40,14 @@ public class Player {
 
 	public void init() {
 		positionMemory = new ArrayList<Coordinate>();
-		
+
 		angle = -Math.PI / 2;
 
 		vel = new Vector(center, 0, 0);
 		gravity = new Vector(null, 0, 0.3);
+
+		currentEdge = null;
+		currentVertex = null;
 
 		trueRadius = 40;
 		colorRadius = trueRadius - borderWidth;
@@ -57,15 +65,33 @@ public class Player {
 			while (positionMemory.size() > positionMemoryCap) positionMemory.remove(positionMemory.size() - 1);
 		}
 
-		vel.addVector(gravity);
 
-		vel = map.updateCollisions(vel);
-		
+		if (currentEdge != null) {
+			double newMag = currentEdge.friction * gravity.yDelta * Math.asin(currentEdge.line.angle);
+			System.out.println(Math.toDegrees(currentEdge.line.angle));//Math.sin(currentEdge.line.angle) * newMag);
+			vel.xDelta += Math.cos(currentEdge.line.angle) * newMag;
+			vel.yDelta += Math.sin(currentEdge.line.angle) * newMag;
+			//double velMagnitude = Constants.distance(0, 0, vel.xDelta, vel.yDelta);
+			//System.out.println(velMagnitude);
+			//vel = new Vector(vel.origin, velMagnitude * currentEdge.line.xAdjustment, velMagnitude * currentEdge.line.yAdjustment);
+		} else {
+			vel.addVector(gravity);
+			Line velLine = new Line(vel.origin, vel.origin.clone(vel.xDelta, vel.yDelta));
+
+			Collision collision = map.getCollision(velLine, currentEdge, null);
+			if (collision != null) {
+				collision.updatePlayer(this);
+			}
+		}
+
 		center.x += vel.xDelta;
+		
+		angle += vel.xDelta / trueRadius;
+		
 		center.y += vel.yDelta;
 
 	}
-	
+
 	public void draw(Graphics2D g2d, Camera camera) {
 		float opacity = 0.25f;
 		float opacityDecreaseValue = 0.05f;
@@ -78,7 +104,7 @@ public class Player {
 
 	public void drawCircle(Graphics2D g2d, Camera camera, Coordinate center, float opacity) {
 		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
-		
+
 		g2d.setColor(Color.WHITE);
 		g2d.fillOval(camera.xAdjust(center.x - trueRadius), camera.yAdjust(center.y - trueRadius), trueRadius * 2, trueRadius * 2);
 		g2d.setColor(color);

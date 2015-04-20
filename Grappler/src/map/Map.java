@@ -19,7 +19,7 @@ public class Map {
 
 		MapVertex v0 = createMapVertex(new Coordinate(0, 0));
 		MapVertex v1 = createMapVertex(new Coordinate(10, 300));
-		MapVertex v2 = createMapVertex(new Coordinate(150, 420), true);
+		MapVertex v2 = createMapVertex(new Coordinate(150, 440), true);
 		MapVertex v3 = createMapVertex(new Coordinate(250, 420), true);
 		MapVertex v4 = createMapVertex(new Coordinate(400, 350));
 		MapVertex v5 = createMapVertex(new Coordinate(450, 375));
@@ -53,35 +53,32 @@ public class Map {
 		}
 	}
 	
-	public Vector updateCollisions(Vector vel) {
-		Coordinate collisionCoorFinal = new Coordinate(vel.origin.x + vel.xDelta, vel.origin.y + vel.yDelta);
+	public Collision getCollision(Line line, MapEdge edgeToIgnore, MapVertex vertexToIgnore) {
 		
-		Line velLine = new Line(vel.origin, vel.origin.clone(vel.xDelta, vel.yDelta));
+		Collision collisionFinal = null;
 		
-		for (MapEdge edge : edges) {
-			Coordinate collisionCoor = edge.line.intersection(velLine);
+		for (final MapEdge edge : edges) {
+			if (edge == edgeToIgnore) continue;
+			
+			final Coordinate collisionCoor = edge.line.intersection(line);
 			if (collisionCoor != null) {
-				System.out.println("hey!");
-				collisionCoorFinal = collisionCoor;
+				collisionFinal = new Collision() {
+
+					@Override
+					public void updatePlayer(Player p) {
+						p.currentEdge = edge;
+						p.center = collisionCoor;
+						p.vel.origin = p.center;
+						p.vel.xDelta = 0;
+						p.vel.yDelta = 0;
+					}
+				};
 				break;
 			}
 		}
 		
-		return vel;//new Vector(vel.origin, vel.origin.x - collisionCoorFinal.x, vel.origin.y - collisionCoorFinal.y);
+		return collisionFinal;//new Vector(vel.origin, vel.origin.x - collisionCoorFinal.x, vel.origin.y - collisionCoorFinal.y);
 	}
-
-	/*public Collision getClosestCollision(Player player, Velocity vel, MapEdge edgeIgnore, MapVertex vertexIgnore) {
-		Collision finalCollision = null;
-		for (MapEdge edge : edges) {
-			if (edge == edgeIgnore) continue;
-			Collision collision = edge.checkCollision(player.hitbox, vel);
-			if (collision != null) {
-				if (finalCollision == null) finalCollision = collision;
-				else if (collision.newVel.distance < finalCollision.newVel.distance) finalCollision = collision;
-			}
-		} //TODO add vertices
-		return finalCollision;
-	}*/
 
 	private MapVertex createMapVertex(Coordinate coor) {
 		return createMapVertex(coor, false);

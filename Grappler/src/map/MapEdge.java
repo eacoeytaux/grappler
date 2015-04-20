@@ -6,6 +6,7 @@ public class MapEdge {
 	public MapVertex leftVertex;
 	public Line line;
 	public boolean hookable;
+	public float friction = 0.8f;
 
 	public MapEdge(Map map, MapVertex leftVertex, MapVertex rightVertex, boolean hookable) {
 		this.parent = map;
