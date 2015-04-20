@@ -16,4 +16,12 @@ public class Coordinate {
 	public double getY() {
 		return y;
 	}
+	
+	public Coordinate clone() {
+		return clone(0, 0);
+	}
+	
+	public Coordinate clone(double dx, double dy) {
+		return new Coordinate(x + dx, y + dy);
+	}
 }

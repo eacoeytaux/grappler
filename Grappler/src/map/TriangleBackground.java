@@ -4,33 +4,39 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Random;
 
 public class TriangleBackground extends AbsBackground {
-	//
-	final Color[] colorStages = {new Color(0x000000), new Color(0x001933), new Color(0x003366), new Color(0x004C99), new Color(0x0066CC), new Color(0x0080FF), new Color(0x3399FF)};//, new Color(0x62B2FF)};
+	//stages of colors each triangle goes through in descending order
+	//final Color[] colorStages = {new Color(0x000000), new Color(0x001933), new Color(0x003366), new Color(0x004C99), new Color(0x0066CC), new Color(0x0080FF), new Color(0x3399FF)};//, new Color(0x62B2FF)};
 	
+	//number of cycles between moving background down 1 pixel
 	int fallTime = 3;
 
+	//half the triangle width/height in pixels
 	final int triangleSize = 24;
 
-	int triangleRowNum;
+	//number of triangles per column
 	int triangleColNum;
 
+	//whether or not the first triangle in a new row is pointing up
 	boolean pointUpStart;
+	//x-offset of first triangle - should remain constant
 	int xOffset;
+	//y-offset of which image should be drawn - should be between 0 and (triangleSize * 2)
 	int yOffset;
 
+	//number of cycles before a triangle changes color
 	final int colorChangeTime = 250;
 
+	//array of all triangles in background
 	ArrayList<Triangle> triangles;
+	//background image to be drawn to canvas
 	BufferedImage image;
 
-	public TriangleBackground(int width, int height) {
-		super(width, height);
+	public TriangleBackground(int width, int height, ColorScheme... schemes) {
+		super(width, height, schemes);
 
-		triangleRowNum = ((height * 2) / (triangleSize * 3));
-		triangleColNum = (width / triangleSize) + 2;
+		triangleColNum = ((int)((double)width * 1.5) / triangleSize) + 2;
 
 		xOffset = (width % triangleSize) / 2;
 		yOffset = -triangleSize * 2;
@@ -38,47 +44,31 @@ public class TriangleBackground extends AbsBackground {
 		image = new BufferedImage((int)((double)width * 1.5), (int)((double)height * 1.5), BufferedImage.TYPE_INT_ARGB);
 		
 		triangles = new ArrayList<Triangle>();
-		//populateTriangles();
 		
-		for (int i = 0; i < 10000; i++) {
+		for (int i = 0; i < 2000; i++) {
 			update(i);
 		}
 		
 	}
 	
-	public void populateTriangles() {
-		pointUpStart = true;
-		
-		for (int i = 0; i < triangleRowNum; i++) {
-			boolean pointUp = pointUpStart;
-			int xOffset = this.xOffset;// : this.xOffset - triangleSize;
-			int yOffset = (i - 1) * (triangleSize * 2);
-			for (int j = 0; j < triangleColNum; j++) {
-				triangles.add(new Triangle(random.nextInt(colorStages.length), random.nextInt(colorChangeTime) + 1, pointUp, xOffset, yOffset));
-
-				xOffset += triangleSize;
-				pointUp = !pointUp;
-			}
-			pointUpStart = !pointUpStart;
-		}
-		
-		pointUpStart = ((triangleRowNum % 2) == 0);
-	}
-	
 	public void addNewRow() {
 		boolean pointUp = pointUpStart;
-		pointUpStart = !pointUpStart;
+		pointUpStart = !pointUpStart; //since next row will be opposite of this row, pointUpStart is flipped
 		int xOffset = this.xOffset;
 		for (int i = 0; i < triangleColNum; i++) {
-			if (random == null) System.out.println("y?");
-			triangles.add(0, new Triangle(random.nextInt(colorStages.length - 3) + 3, random.nextInt(colorChangeTime - 1) + 1, pointUp, xOffset, 0));
+			ColorScheme scheme = schemes[random.nextInt(schemes.length)];
+			triangles.add(0, new Triangle(scheme, random.nextInt(scheme.getLength() - 3) + 3, random.nextInt(colorChangeTime - 1) + 1, pointUp, xOffset, 0)); //adds new triangle to head of ArrayList
 			
-			if (triangles.size() > 1116) triangles.remove(triangles.size() - 1);
+			while (triangles.size() > 1116) {
+				System.out.println("!!!!");
+				triangles.remove(triangles.size() - 1); //removes excess triangles from ArrayList
+			}
 			
 			xOffset += triangleSize;
-			pointUp = !pointUp;
+			pointUp = !pointUp; //flips whether or not next triangle is pointing up
 		}
 		
+		//pushes image down triangleSize * 2 pixels
 		BufferedImage tempImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2dTemp = (Graphics2D)tempImage.getGraphics();
 		g2dTemp.drawImage(image, 0, 0, null);
@@ -93,12 +83,12 @@ public class TriangleBackground extends AbsBackground {
 
 	@Override
 	public void update(long counter) {
-		boolean push = false;
+		boolean push = false; //whether of not triangle yOffset needs to be updated
 		
 		if ((counter % fallTime) == 0) {
 			yOffset++;
-			while (yOffset >= 0) {
-				yOffset -= triangleSize * 2;
+			if (yOffset >= 0) {
+				yOffset -= triangleSize * 2; //resets yOffset to starting position
 				addNewRow();
 				push = true;
 			}
@@ -121,7 +111,7 @@ public class TriangleBackground extends AbsBackground {
 	private void drawTriangle(Triangle tri) {
 		Graphics2D g2d = (Graphics2D)image.getGraphics();
         
-		g2d.setColor(colorStages[tri.stage]);
+		g2d.setColor(tri.getColor());
 		
 		int[] yPoints = new int[3];
 		
@@ -134,6 +124,7 @@ public class TriangleBackground extends AbsBackground {
 	}
 
 	private class Triangle {
+		ColorScheme scheme;
 		int stage;
 		int timeOffset;
 
@@ -143,7 +134,8 @@ public class TriangleBackground extends AbsBackground {
 		int[] yPoints;
 		int yOffset;
 
-		public Triangle(int stage, int timeOffset, boolean pointUp, int xOffset, int yOffset) {
+		public Triangle(ColorScheme scheme, int stage, int timeOffset, boolean pointUp, int xOffset, int yOffset) {
+			this.scheme = scheme;
 			this.stage = stage;
 			this.timeOffset = timeOffset;
 
@@ -151,21 +143,16 @@ public class TriangleBackground extends AbsBackground {
 
 			xPoints = new int[3];
 			yPoints = new int[3];
-
+			
+			xPoints[0] = triangleSize + xOffset;
+			xPoints[1] = (triangleSize * 2) + xOffset;
+			xPoints[2] = (triangleSize * 3) + xOffset;
 
 			if (pointUp) {
-				xPoints[0] = triangleSize + xOffset;
-				xPoints[1] = (triangleSize * 2) + xOffset;
-				xPoints[2] = (triangleSize * 3) + xOffset;
-				
 				yPoints[0] = (triangleSize * 2) + yOffset;
 				yPoints[1] = yOffset;
 				yPoints[2] = (triangleSize * 2) + yOffset;
 			} else {
-				xPoints[0] = triangleSize + xOffset;
-				xPoints[1] = (triangleSize * 2) + xOffset;
-				xPoints[2] = (triangleSize * 3) + xOffset;
-				
 				yPoints[0] = yOffset;
 				yPoints[1] = (triangleSize * 2) + yOffset;
 				yPoints[2] = yOffset;
@@ -180,6 +167,10 @@ public class TriangleBackground extends AbsBackground {
 				}
 			}
 			if (push) yOffset += triangleSize * 2;
+		}
+		
+		public Color getColor() {
+			return scheme.getColor(stage);
 		}
 
 		public void draw() {

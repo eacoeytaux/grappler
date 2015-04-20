@@ -22,11 +22,11 @@ public class Engine {
 	
 	boolean running;
 	Thread backgroundThread;
-	BufferedImage backgroundImage;
 	
 	public Engine(GamePanel parentPanel) {
 		this.parentPanel = parentPanel;
 		
+		loadColorSchemes();
 		init();
 	}
 	
@@ -34,8 +34,7 @@ public class Engine {
 		running = true;
 		counter = 0;
 		camera = new Camera(parentPanel.WIDTH, parentPanel.HEIGHT, parentPanel.WIDTH / 2, parentPanel.HEIGHT / 2);
-		background = new TriangleBackground(parentPanel.WIDTH, parentPanel.HEIGHT);
-		backgroundImage = new BufferedImage(parentPanel.WIDTH, parentPanel.HEIGHT, BufferedImage.TYPE_INT_ARGB);
+		background = new TriangleBackground(parentPanel.WIDTH, parentPanel.HEIGHT, ColorSchemes.getScheme("BLUE"), ColorSchemes.getScheme("RED"));
 		map = new Map();
 		p1 = new Player(Color.ORANGE, new Coordinate(50, 50));
 		reset = false;
@@ -48,7 +47,7 @@ public class Engine {
 		
 		background.update(counter);
 		map.update(counter);
-		p1.update(counter);
+		//p1.update(map, counter);
 		
 		draw();
 	}
@@ -69,5 +68,10 @@ public class Engine {
 	
 	public void keyPressed(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_R) reset = true;
+	}
+	
+	public void loadColorSchemes() {
+		ColorSchemes.addColorScheme(new ColorScheme(new Color(0x000000), new Color(0x001933), new Color(0x003366), new Color(0x004C99), new Color(0x0066CC), new Color(0x0080FF), new Color(0x3399FF)), "BLUE");
+		ColorSchemes.addColorScheme(new ColorScheme(new Color(0x000000), new Color(0x330019), new Color(0x660033), new Color(0x99004C), new Color(0x0066CC), new Color(0x0CC0066), new Color(0x0FF007F)), "RED");
 	}
 }

@@ -52,6 +52,22 @@ public class Map {
 			g2d.drawOval(camera.xAdjust(vertex.coordinate.x) - 4, camera.yAdjust(vertex.coordinate.y) - 4, 8, 8);
 		}
 	}
+	
+	public Vector updateCollisions(Vector vel) {
+		Coordinate collisionCoorFinal = new Coordinate(vel.origin.x + vel.xDelta, vel.origin.y + vel.yDelta);
+		
+		Line velLine = new Line(vel.origin, vel.origin.clone(vel.xDelta, vel.yDelta));
+		
+		for (MapEdge edge : edges) {
+			Coordinate collisionCoor = edge.line.intersection(velLine);
+			if (collisionCoorFinal == null) {
+				collisionCoorFinal = collisionCoor;
+				break;
+			}
+		}
+		
+		return null;
+	}
 
 	/*public Collision getClosestCollision(Player player, Velocity vel, MapEdge edgeIgnore, MapVertex vertexIgnore) {
 		Collision finalCollision = null;
