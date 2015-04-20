@@ -91,4 +91,27 @@ public class Line {
 			return null;
 		}
 	}
+	
+	public double getPerpendicularDx(double distance) {
+		return yAdjustment * distance;
+	}
+	
+	public double getPerpendicularDy(double distance) {
+		return xAdjustment * -distance;
+	}
+		
+		/*
+		double dx = yAdjustment * distance;
+		double dy = xAdjustment * -distance;
+		
+		double angle = Math.toDegrees(this.angle);
+		System.out.println(angle);
+		double angleSin = Math.sin(angle);
+		double angleCos = Math.cos(angle);
+		System.out.println(angleSin);
+		double dx = angleSin * distance;
+		double dy = angleCos * distance;
+		
+		return new Line(coor1.x + dx, coor1.y + dy, coor2.x + dx, coor2.y + dy);
+	}*/
 }
