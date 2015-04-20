@@ -8,14 +8,14 @@ import java.util.Random;
 
 import map.AbsBackground;
 
-public class SquareBackground extends AbsBackground {
+public class SquareWaveBackground extends AbsBackground {
 	
 	final Color[] colorStages = {new Color(0x000000), new Color(0x1c1f19), new Color(0x262a21), new Color(0x2f352a), new Color(0x393f32), new Color(0x424a2a), new Color(0x555f4b)};//, new Color(0x62B2FF)};
 	
-	int fallTime = 3;
-
 	final int squareSize = 24;
 
+	int fallTime = 3;
+	
 	int squareRowNum;
 	int squareColNum;
 
@@ -24,10 +24,10 @@ public class SquareBackground extends AbsBackground {
 
 	final int colorChangeTime = 250;
 
-	ArrayList<Square> squares;
+	ArrayList<SquareWave> squares;
 	BufferedImage image;
 
-	public SquareBackground(int width, int height) {
+	public SquareWaveBackground(int width, int height) {
 		super(width, height);
 
 		squareRowNum = (height/ squareSize );
@@ -38,12 +38,7 @@ public class SquareBackground extends AbsBackground {
 
 		image = new BufferedImage((int)((double)width * 1.5), (int)((double)height * 1.5), BufferedImage.TYPE_INT_ARGB);
 		
-		squares = new ArrayList<Square>();
-		//populateTriangles();
-		
-		for (int i = 0; i < 10000; i++) {
-			update(i);
-		}
+		squares = new ArrayList<SquareWave>();
 		
 	}
 	
@@ -52,7 +47,7 @@ public class SquareBackground extends AbsBackground {
 			int xOffset = this.xOffset;// : this.xOffset - squareSize;
 			int yOffset = (i - 1) * squareSize;
 			for (int j = 0; j < squareColNum; j++) {
-				squares.add(new Square(random.nextInt(colorStages.length), random.nextInt(colorChangeTime) + 1, xOffset, yOffset));
+				squares.add(new SquareWave(random.nextInt(colorStages.length), random.nextInt(colorChangeTime) + 1, xOffset, yOffset));
 
 				xOffset += squareSize;
 			}
@@ -63,11 +58,30 @@ public class SquareBackground extends AbsBackground {
 		int xOffset = this.xOffset;
 		for (int i = 0; i < squareColNum; i++) {
 			if (random == null) System.out.println("y?");
-			squares.add(0, new Square(random.nextInt(colorStages.length - 3) + 3, random.nextInt(colorChangeTime - 1) + 1, xOffset, 0));
+			squares.add(0, new SquareWave(random.nextInt(colorStages.length - 3) + 3, random.nextInt(colorChangeTime - 1) + 1, xOffset, 0));
 			
 			if (squares.size() > 1116) squares.remove(squares.size() - 1);
 			
 			xOffset += squareSize;
+		}
+		
+		BufferedImage tempImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2dTemp = (Graphics2D)tempImage.getGraphics();
+		g2dTemp.drawImage(image, 0, 0, null);
+		g2dTemp.dispose();
+		
+		Graphics2D g2d = (Graphics2D)image.getGraphics();
+		g2d.setColor(Color.BLACK);
+		g2d.fillRect(0, 0, image.getWidth(), image.getHeight());
+		g2d.drawImage(tempImage, 0, squareSize, null);
+		g2d.dispose();
+	}
+	
+	public void addNewColumn() {
+		int yOffset = this.yOffset;
+		for (int i = 0; i< squareColNum; i++) {
+			if (random == null) System.out.println("y?");
+			squares.add(0, new SquareWave(random.nextInt(colorStages.length - 3) + 3, random.nextInt(colorChangeTime - 1) + 1, 0, yOffset));
 		}
 		
 		BufferedImage tempImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -87,32 +101,32 @@ public class SquareBackground extends AbsBackground {
 		boolean push = false;
 		
 		if ((counter % fallTime) == 0) {
-			yOffset++;
-			while (yOffset >= 0) {
-				yOffset -= squareSize;
-				addNewRow();
+			xOffset++;
+			while (xOffset >= 0) {
+				xOffset -= squareSize;
+				addNewColumn();
 				push = true;
 			}
 		}
 		
-		for (Square square : squares) {
+		for (SquareWave square : squares) {
 			square.update(counter, push);
 		}
 	}
 
 	@Override
 	public void draw(Graphics2D g2d) {
-		for (Square triangle : squares) {
+		for (SquareWave triangle : squares) {
 			triangle.draw();
 		}
 		
 		g2d.drawImage(image, -squareSize, yOffset - squareSize, null);
 	}
 
-	private void drawSquare(Square squa) {
+	private void drawSquareWave(SquareWave squa) {
 		Graphics2D g2d = (Graphics2D)image.getGraphics();
         
-		g2d.setColor(colorStages[squa.stage]);
+		g2d.setColor(colorStages[random.nextInt(colorStages.length)]);
 		
 		int[] yPoints = new int[4];
 		
@@ -125,8 +139,7 @@ public class SquareBackground extends AbsBackground {
 		g2d.dispose();
 	}
 
-	private class Square {
-		int stage;
+	private class SquareWave {
 		int timeOffset;
 
 		boolean needsDrawing;
@@ -135,8 +148,7 @@ public class SquareBackground extends AbsBackground {
 		int[] yPoints;
 		int yOffset;
 
-		public Square(int stage, int timeOffset, int xOffset, int yOffset) {
-			this.stage = stage;
+		public SquareWave(int stage, int timeOffset, int xOffset, int yOffset) {
 			this.timeOffset = timeOffset;
 
 			needsDrawing = true;
@@ -159,17 +171,14 @@ public class SquareBackground extends AbsBackground {
 
 		public void update(long counter, boolean push) {
 			if (((counter + timeOffset) % colorChangeTime) == 0) {
-				if (stage > 0) {
-					stage--;
 					needsDrawing = true;
-				}
 			}
 			if (push) yOffset += squareSize;
 		}
 
 		public void draw() {
 			if (needsDrawing) {
-				drawSquare(this);
+				drawSquareWave(this);
 				needsDrawing = false;
 			}
 		}
