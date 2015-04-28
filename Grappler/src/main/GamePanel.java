@@ -58,7 +58,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 		running = true;
 		engine = new Engine(self);
 
-		runningThread = new Thread(new Thread() {
+		runningThread = new Thread() {
 			@Override
 			public void run() {
 				@SuppressWarnings({"unused"})
@@ -78,9 +78,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 					} //else System.out.println("runningThread missed deadline! - Total:" + ++missedDeadlines);
 				}
 			}
-		});
+		};
 		
-		graphicsThread = new Thread(new Thread() {
+		graphicsThread = new Thread() {
 			@Override
 			public void run() {
 				@SuppressWarnings({"unused"})
@@ -100,7 +100,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 					} //else System.out.println("graphicsThread missed deadline! - Total:" + ++missedDeadlines);
 				}
 			}
-		});
+		};
 		
 		runningThread.start();
 		graphicsThread.start();

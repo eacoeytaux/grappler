@@ -35,7 +35,7 @@ public class Engine {
 		counter = 0;
 		camera = new Camera(parentPanel.WIDTH, parentPanel.HEIGHT, parentPanel.WIDTH / 2, parentPanel.HEIGHT / 2);
 
-		background = new TriangleBackground(parentPanel.WIDTH, parentPanel.HEIGHT, ColorSchemes.getScheme("BLUE"));
+		background = new SquareBackground(parentPanel.WIDTH, parentPanel.HEIGHT);
 
 		map = new Map();
 		p1 = new Player(Color.ORANGE, new Coordinate(50, 50));
@@ -76,5 +76,6 @@ public class Engine {
 	public void loadColorSchemes() {
 		ColorSchemes.addColorScheme(new ColorScheme(new Color(0x000000), new Color(0x001933), new Color(0x003366), new Color(0x004C99), new Color(0x0066CC), new Color(0x0080FF), new Color(0x3399FF)), "BLUE");
 		ColorSchemes.addColorScheme(new ColorScheme(new Color(0x000000), new Color(0x330019), new Color(0x660033), new Color(0x99004C), new Color(0x0066CC), new Color(0x0CC0066), new Color(0x0FF007F)), "RED");
+		ColorSchemes.addColorScheme(new ColorScheme(new Color(330014), new Color(0x4C001F), new Color(0x660029), new Color(0x800033), new Color(0x99003D), new Color(0x1A000A), new Color(0x330014)), "PINK");
 	}
 }
