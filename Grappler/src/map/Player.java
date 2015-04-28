@@ -64,14 +64,36 @@ public class Player {
 	}
 
 	public void update(Map map, long counter) {
+		//energy
 		if (barPercentage < 1) barPercentage += barIncreaseSpeed;
 		if (barPercentage > 1) barPercentage = 1;
 
+		//trail
 		if ((counter % positionMemoryFreq) == 0) {
 			positionMemory.add(0, center.clone());
 			while (positionMemory.size() > positionMemoryCap) positionMemory.remove(positionMemory.size() - 1);
 		}
+		
+		//add forces to velocity
+		vel.addVector(gravity);
+		
+		
+		Vector tempVel = new Vector(vel.origin, vel.dx, vel.dy);
+		
+		while ((tempVel.dx != 0) && (tempVel.dy != 0)) {
+			
+			//adjust velocity vector
+			if (currentEdge != null) {
+				
+			} else if (currentVertex != null) {
+				
+			}
+			
+			Coordinate col = map.getCollision(tempVel, currentEdge, currentVertex);
+		}
 
+		
+		/*
 		if (currentEdge != null) {
 			
 		} else if (currentVertex != null) {
@@ -90,6 +112,7 @@ public class Player {
 		angle %= Math.PI * 2;
 
 		center.y += vel.yDelta;
+		*/
 	}
 
 	public void draw(Graphics2D g2d, Camera camera) {
