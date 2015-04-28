@@ -5,10 +5,8 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
-import main.Constants;
-
 public class Map {
-	boolean showBumpers = true;
+	boolean showBumpers = false;
 
 	ArrayList<MapVertex> vertices;
 	ArrayList<MapEdge> edges;
@@ -48,23 +46,22 @@ public class Map {
 	public void draw(Graphics2D g2d, Camera camera) {
 		g2d.setStroke(new BasicStroke(2));
 		for (MapEdge edge : edges) {
-			g2d.setColor(Color.GREEN);
+			g2d.setColor(Color.WHITE);
 			g2d.drawLine(camera.xAdjust(edge.line.coor1.x), camera.yAdjust((int)edge.line.coor1.y), camera.xAdjust((int)edge.line.coor2.x), camera.yAdjust((int)edge.line.coor2.y));
 			if (showBumpers) {
-				g2d.setColor(Color.PINK);
+				g2d.setColor(Color.GREEN);
 				g2d.drawLine(camera.xAdjust(edge.frontBumperLine.coor1.x), camera.yAdjust((int)edge.frontBumperLine.coor1.y), camera.xAdjust((int)edge.frontBumperLine.coor2.x), camera.yAdjust((int)edge.frontBumperLine.coor2.y));
 				g2d.drawLine(camera.xAdjust(edge.backBumperLine.coor1.x), camera.yAdjust((int)edge.backBumperLine.coor1.y), camera.xAdjust((int)edge.backBumperLine.coor2.x), camera.yAdjust((int)edge.backBumperLine.coor2.y));
-
-				g2d.setColor(Color.MAGENTA);
+				g2d.setColor(Color.RED);
 				g2d.drawLine(camera.xAdjust(edge.leftCatchLine.coor1.x), camera.yAdjust((int)edge.leftCatchLine.coor1.y), camera.xAdjust((int)edge.leftCatchLine.coor2.x), camera.yAdjust((int)edge.leftCatchLine.coor2.y));
 				g2d.drawLine(camera.xAdjust(edge.rightCatchLine.coor1.x), camera.yAdjust((int)edge.rightCatchLine.coor1.y), camera.xAdjust((int)edge.rightCatchLine.coor2.x), camera.yAdjust((int)edge.rightCatchLine.coor2.y));
 			}
 		}
 		for (MapVertex vertex : vertices) {
-			g2d.setColor(Color.YELLOW);
-			g2d.drawOval(camera.xAdjust(vertex.coordinate.x) - 4, camera.yAdjust(vertex.coordinate.y) - 4, 8, 8);
+			//g2d.setColor(Color.YELLOW);
+			//g2d.drawOval(camera.xAdjust(vertex.coordinate.x) - 4, camera.yAdjust(vertex.coordinate.y) - 4, 8, 8);
 			if (showBumpers) {
-				g2d.setColor(Color.MAGENTA);
+				g2d.setColor(Color.GREEN);
 				g2d.drawOval(camera.xAdjust(vertex.coordinate.x) - Player.trueRadius, camera.yAdjust(vertex.coordinate.y) - Player.trueRadius, Player.trueRadius * 2, Player.trueRadius * 2);
 			}
 		}

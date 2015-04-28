@@ -6,12 +6,10 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
-import main.Constants;
-
 public class Player {
 	ArrayList<Coordinate> positionMemory;
-	int positionMemoryFreq = 2;
-	int positionMemoryCap = 4;
+	int positionMemoryFreq = 1;
+	int positionMemoryCap = 5;
 
 	Color color;
 
@@ -81,7 +79,7 @@ public class Player {
 		
 		map.updatePlayerPos(this, gravity);
 
-		//vel.addVector(gravity);
+		vel.addVector(gravity);
 		
 		center.x += vel.xDelta;
 
@@ -92,7 +90,7 @@ public class Player {
 	}
 
 	public void draw(Graphics2D g2d, Camera camera) {
-		float opacity = 0.25f;
+		float opacity = 0.3f;
 		float opacityDecreaseValue = 0.05f;
 		for (Coordinate coor : positionMemory) {
 			opacity -= opacityDecreaseValue;
