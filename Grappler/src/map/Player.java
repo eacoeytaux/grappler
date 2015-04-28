@@ -27,7 +27,7 @@ public class Player {
 	MapEdge currentEdge;
 	MapVertex currentVertex;
 
-	double angle; //in radians
+	double angle; //rotation angle in radians
 
 	boolean drawAimer = true;
 	double aimerAngle;
