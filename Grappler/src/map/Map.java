@@ -70,35 +70,32 @@ public class Map {
 		}
 	}
 	
-	public Coordinate getCollision(Vector vel, MapEdge currentEdge, MapVertex currentVertex) {
-		Coordinate closestIntersection = null;
+	public AbsMapElement getCollision(Vector vel, AbsMapElement currentElement) {
+		AbsMapElement closestElement = null;
+		double distanceToElement = 0;
 		
-		Line vectorLine = new Line(vel.origin.x, vel.origin.y, vel.origin.x+vel.dx, vel.origin.y+vel.dy);
 		
-		for( MapEdge edge: edges){
-			if (edge != currentEdge){
-				Coordinate coor = vectorLine.intersection(edge.bumper);
+		Line vectorLine = vel.toLine();
+		
+		for( AbsMapElement element: elements){
+			if (element != currentElement){
+				Coordinate coor = element.findCollision(vectorLine);
 				if(coor != null){
-					if(closestIntersection == null){
-						closestIntersection = coor;
+					double dist =  Constants.distance(coor, vel.origin);
+					if(closestElement == null){
+						closestElement = element;
+						distanceToElement = dist;
 					}else{
-						if( Constants.distance(coor, vel.origin) < Constants.distance(closestIntersection, vel.origin)){
-							closestIntersection = coor;
+						if( dist < distanceToElement){
+							closestElement = element;
+							distanceToElement = dist;
 						}
 					}
 				}
 			}
 		}
 		
-		return closestIntersection;
-		
-		/*
-		for( MapVertex vertex: vertices){
-			if (vertex != currentVertex){
-				//TODO
-			}
-		}
-		*/
+		return closestElement;
 	}
 
 	private MapVertex createMapVertex(Coordinate coor) {
