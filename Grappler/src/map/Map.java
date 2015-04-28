@@ -6,7 +6,7 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 public class Map {
-	boolean showBumpers = false;
+	boolean showBumpers = true;
 
 	ArrayList<MapVertex> vertices;
 	ArrayList<MapEdge> edges;
@@ -67,28 +67,8 @@ public class Map {
 		}
 	}
 	
-	public void updatePlayerPos(Player p, Vector nextVel) {
-		boolean edgeNull = (p.currentEdge == null);
-		boolean vertexNull = (p.currentVertex == null);
-		
-		/*if (!edgeNull) nextVel = p.currentEdge.absorbVector(nextVel);
-		else if (!vertexNull) nextVel = p.currentVertex.absorbVector(nextVector)*/
-		
-		for (MapEdge edge : edges) {
-			if (edge == p.currentEdge) continue;
-			//check for other collisions
-		}
-		for (MapVertex vertex : vertices) {
-			if (vertex == p.currentVertex) continue;
-		}
-		
-		if (p.currentEdge != null) {
-			//check edge catches
-		} else if (p.currentVertex != null) {
-			//dunno yet...
-		}
-		
-		
+	public Coordinate getCollision(Vector vel, MapEdge currentEdge, MapVertex currentVertex) {
+		return null;
 	}
 
 	private MapVertex createMapVertex(Coordinate coor) {
