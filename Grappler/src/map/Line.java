@@ -1,6 +1,5 @@
 package map;
 
-import map.Coordinate;
 
 public class Line {
 	double angle; //in radians
