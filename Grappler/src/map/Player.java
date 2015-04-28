@@ -77,27 +77,26 @@ public class Player {
 		//add forces to velocity
 		vel.addVector(gravity);
 		
-		
 		Vector tempVel = new Vector(vel.origin, vel.dx, vel.dy);
-		double nextVelMag = vel.getMagnitude(); //TODO apply this to the next velocity
+		//double nextVelMag = vel.getMagnitude(); //TODO apply this to the next velocity
 		
-		while ((tempVel.dx != 0) && (tempVel.dy != 0)) {
+		//TODO set magnitude of next velocity to appropiate magnitude
+		while ((tempVel.dx != 0) || (tempVel.dy != 0)) {
 			double velMag = tempVel.getMagnitude();
 			
 			//adjust velocity vector
 			if (currentElement != null) {
-				
+				currentElement.adjustVector(tempVel);
 			}
 			
-			AbsMapElement collidedElement = null;//map.getCollision(tempVel, currentElement);
+			AbsMapElement collidedElement = map.getCollision(tempVel, currentElement);
 			
 			if (collidedElement != null) { //collision detected
-				
 				Coordinate collisionCoor = collidedElement.findCollision(tempVel.toLine());
-				float percentage = (float)Constants.distance(tempVel.origin, collisionCoor) / (float)velMag;
+				float percentage = 1f - (float)Constants.distance(tempVel.origin, collisionCoor) / (float)velMag;
 				
 				currentElement = collidedElement;
-				
+				tempVel = new Vector(collisionCoor, tempVel.dx * percentage, tempVel.dy * percentage);
 			} else { //no collision
 				addVectorToCenter(tempVel);
 				break;
@@ -136,6 +135,14 @@ public class Player {
 	}
 
 	public void draw(Graphics2D g2d, Camera camera) {
+		
+		//for debugging
+		if (false) {
+			g2d.setColor(Color.WHITE);
+			g2d.drawOval(camera.xAdjust(center.x - 2), camera.xAdjust(center.y - 2), 4, 4);
+			return;
+		}
+		
 		float opacity = 0.3f;
 		float opacityDecreaseValue = 0.05f;
 		for (Coordinate coor : positionMemory) {

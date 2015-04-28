@@ -16,6 +16,10 @@ public class MapVertex extends AbsMapElement {
 	}
 	
 	public Coordinate findCollision(Line line) {
-		return null;
+		return null; //TODO something
+	}
+	
+	public boolean adjustVector(Vector vector) {
+		return true; //TODO something
 	}
 }

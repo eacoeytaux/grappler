@@ -10,15 +10,16 @@ import main.Constants;
 public class Map {
 	boolean showBumpers = true;
 
+	ArrayList<AbsMapElement> elements;
 	ArrayList<MapVertex> vertices;
 	ArrayList<MapEdge> edges;
-	ArrayList<AbsMapElement> elements;
 
 	public Map() {
 		loadMap();
 	}
 
 	public void loadMap() {
+		elements = new ArrayList<AbsMapElement>();
 		vertices = new ArrayList<MapVertex>();
 		edges = new ArrayList<MapEdge>();
 		

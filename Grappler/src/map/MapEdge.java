@@ -31,4 +31,16 @@ public class MapEdge extends AbsMapElement {
 	public Coordinate findCollision(Line line) {
 		return bumper.intersection(line);
 	}
+	
+	public boolean adjustVector(Vector vector) {
+		double adjustedValue = vector.toLine().angle - line.angle;
+		if ((adjustedValue < 0) || (adjustedValue > Math.PI)) return false;
+		
+		double newMag = Math.sin(line.angle) * vector.getMagnitude();
+		
+		vector.dx = Math.cos(line.angle) * newMag;
+		vector.dy = Math.sin(line.angle) * newMag;
+		
+		return true;
+	}
 }

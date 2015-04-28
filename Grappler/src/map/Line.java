@@ -49,7 +49,7 @@ public class Line {
 			vertical = true;
 			m = 0;
 			b = 0;
-			angle = 90;
+			angle = Math.PI / 2;
 			xAdjustment = 1;
 			yAdjustment = 0;
 		}
