@@ -27,4 +27,5 @@ public class MapEdge {
 		
 		this.hookable = hookable;
 	}
+	
 }
