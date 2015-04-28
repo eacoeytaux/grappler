@@ -9,8 +9,10 @@ import java.util.ArrayList;
 import main.Constants;
 
 public class Player {
+	
+	//trail
 	ArrayList<Coordinate> positionMemory;
-	int positionMemoryFreq = 2;
+	int positionMemoryFreq = 2; 
 	int positionMemoryCap = 4;
 
 	Color color;
@@ -28,7 +30,7 @@ public class Player {
 
 	double angle; //in radians
 
-	boolean drawAimer = false;
+	boolean drawAimer = true;
 	double aimerAngle;
 	static final int aimerRadius = 72;
 

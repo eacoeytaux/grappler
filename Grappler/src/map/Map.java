@@ -23,8 +23,8 @@ public class Map {
 		
 		MapVertex v0 = createMapVertex(new Coordinate(0, 0));
 		MapVertex v1 = createMapVertex(new Coordinate(10, 300));
-		MapVertex v2 = createMapVertex(new Coordinate(150, 310), true);
-		MapVertex v3 = createMapVertex(new Coordinate(250, 420), true);
+		MapVertex v2 = createMapVertex(new Coordinate(150, 310));
+		MapVertex v3 = createMapVertex(new Coordinate(250, 420));
 		MapVertex v4 = createMapVertex(new Coordinate(400, 350));
 		MapVertex v5 = createMapVertex(new Coordinate(450, 375));
 		MapVertex v6 = createMapVertex(new Coordinate(500, 350));
@@ -95,11 +95,7 @@ public class Map {
 	}
 
 	private MapVertex createMapVertex(Coordinate coor) {
-		return createMapVertex(coor, false);
-	}
-
-	private MapVertex createMapVertex(Coordinate coor, boolean isGrabbable) {
-		MapVertex mapVertex = new MapVertex(this, coor, isGrabbable);
+		MapVertex mapVertex = new MapVertex(this, coor);
 		vertices.add(mapVertex);
 		return mapVertex;
 	}
