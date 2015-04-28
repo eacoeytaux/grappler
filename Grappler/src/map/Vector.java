@@ -17,6 +17,10 @@ public class Vector {
 		this.dy = dy;
 	}
 	
+	public Line toLine() {
+		return new Line(origin.x, origin.y, origin.x + dx, origin.y + dy);
+	}
+	
 	public double getMagnitude() {
 		return Constants.distance(0, 0, dx, dy);
 	}

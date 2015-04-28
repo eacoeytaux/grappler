@@ -26,8 +26,7 @@ public class Player {
 	
 	Vector gravity;
 
-	MapEdge currentEdge;
-	MapVertex currentVertex;
+	AbsMapElement currentElement;
 
 	double angle; //rotation angle in radians
 
@@ -59,8 +58,7 @@ public class Player {
 		vel = new Vector(center, 0, 0);
 		gravity = new Vector(null, 0, 0.2);
 
-		currentEdge = null;
-		currentVertex = null;
+		currentElement = null;
 
 		barPercentage = 0;
 	}
@@ -87,20 +85,22 @@ public class Player {
 			double velMag = tempVel.getMagnitude();
 			
 			//adjust velocity vector
-			if (currentEdge != null) {
-				
-			} else if (currentVertex != null) {
+			if (currentElement != null) {
 				
 			}
 			
-			Coordinate collisionCoor = map.getCollision(tempVel, currentEdge, currentVertex);
+			/*AbsMapElement collidedElement = map.getCollision(tempVel, currentElement);
 			
-			if (collisionCoor != null) { //collision detected
-				double nextMag = velMag - Constants.distance(tempVel.origin, collisionCoor);
+			if (collidedElement != null) { //collision detected
+				
+				//Coordinate collision = collidedElement.findCollision(line)
+				
+				
+				//double nextMag = velMag - Constants.distance(tempVel.origin, collisionCoor);
 			} else { //no collision
 				addVectorToCenter(tempVel);
 				break;
-			}
+			}*/
 		}
 
 		
