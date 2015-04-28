@@ -12,6 +12,7 @@ public class Map {
 
 	ArrayList<MapVertex> vertices;
 	ArrayList<MapEdge> edges;
+	ArrayList<AbsMapElement> elements;
 
 	public Map() {
 		loadMap();
@@ -52,7 +53,7 @@ public class Map {
 			g2d.drawLine(camera.xAdjust(edge.line.coor1.x), camera.yAdjust((int)edge.line.coor1.y), camera.xAdjust((int)edge.line.coor2.x), camera.yAdjust((int)edge.line.coor2.y));
 			if (showBumpers) {
 				g2d.setColor(Color.GREEN);
-				g2d.drawLine(camera.xAdjust(edge.frontBumperLine.coor1.x), camera.yAdjust((int)edge.frontBumperLine.coor1.y), camera.xAdjust((int)edge.frontBumperLine.coor2.x), camera.yAdjust((int)edge.frontBumperLine.coor2.y));
+				g2d.drawLine(camera.xAdjust(edge.bumper.coor1.x), camera.yAdjust((int)edge.bumper.coor1.y), camera.xAdjust((int)edge.bumper.coor2.x), camera.yAdjust((int)edge.bumper.coor2.y));
 				//g2d.drawLine(camera.xAdjust(edge.backBumperLine.coor1.x), camera.yAdjust((int)edge.backBumperLine.coor1.y), camera.xAdjust((int)edge.backBumperLine.coor2.x), camera.yAdjust((int)edge.backBumperLine.coor2.y));
 				g2d.setColor(Color.RED);
 				g2d.drawLine(camera.xAdjust(edge.leftCatchLine.coor1.x), camera.yAdjust((int)edge.leftCatchLine.coor1.y), camera.xAdjust((int)edge.leftCatchLine.coor2.x), camera.yAdjust((int)edge.leftCatchLine.coor2.y));
@@ -76,7 +77,7 @@ public class Map {
 		
 		for( MapEdge edge: edges){
 			if (edge != currentEdge){
-				Coordinate coor = vectorLine.intersection(edge.frontBumperLine);
+				Coordinate coor = vectorLine.intersection(edge.bumper);
 				if(coor != null){
 					if(closestIntersection == null){
 						closestIntersection = coor;
@@ -103,6 +104,7 @@ public class Map {
 	private MapVertex createMapVertex(Coordinate coor) {
 		MapVertex mapVertex = new MapVertex(this, coor);
 		vertices.add(mapVertex);
+		elements.add(mapVertex);
 		return mapVertex;
 	}
 
@@ -111,6 +113,7 @@ public class Map {
 		leftVertex.rightEdge = mapEdge;
 		rightVertex.leftEdge = mapEdge;
 		edges.add(mapEdge);
+		elements.add(mapEdge);
 		return mapEdge;
 	}
 }

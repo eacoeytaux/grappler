@@ -14,5 +14,8 @@ public class MapVertex extends AbsMapElement {
 	public MapEdge getEdge(boolean right) {
 		return (right ? rightEdge : leftEdge);
 	}
- 
+	
+	public Coordinate findCollision(Line line) {
+		return null;
+	}
 }
