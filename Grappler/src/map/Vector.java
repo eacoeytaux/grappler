@@ -1,5 +1,7 @@
 package map;
 
+import main.Constants;
+
 public class Vector {
 	Coordinate origin;
 	double dx;
@@ -13,6 +15,10 @@ public class Vector {
 		this.origin = origin;
 		this.dx = dx;
 		this.dy = dy;
+	}
+	
+	public double getMagnitude() {
+		return Constants.distance(0, 0, dx, dy);
 	}
 	
 	public void addVector(Vector other) {

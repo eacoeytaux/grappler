@@ -1,6 +1,6 @@
 package map;
 
-public class MapEdge {
+public class MapEdge extends AbsMapElement {
 	public final Map parent;
 	public MapVertex rightVertex;
 	public MapVertex leftVertex;

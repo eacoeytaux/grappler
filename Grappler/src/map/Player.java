@@ -6,6 +6,8 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
+import main.Constants;
+
 public class Player {
 	
 	//trail
@@ -79,8 +81,10 @@ public class Player {
 		
 		
 		Vector tempVel = new Vector(vel.origin, vel.dx, vel.dy);
+		double nextVelMag = vel.getMagnitude(); //TODO apply this to the next velocity
 		
 		while ((tempVel.dx != 0) && (tempVel.dy != 0)) {
+			double velMag = tempVel.getMagnitude();
 			
 			//adjust velocity vector
 			if (currentEdge != null) {
@@ -89,7 +93,14 @@ public class Player {
 				
 			}
 			
-			Coordinate col = map.getCollision(tempVel, currentEdge, currentVertex);
+			Coordinate collisionCoor = map.getCollision(tempVel, currentEdge, currentVertex);
+			
+			if (collisionCoor != null) { //collision detected
+				double nextMag = velMag - Constants.distance(tempVel.origin, collisionCoor);
+			} else { //no collision
+				addVectorToCenter(tempVel);
+				break;
+			}
 		}
 
 		
@@ -113,6 +124,14 @@ public class Player {
 
 		center.y += vel.yDelta;
 		*/
+	}
+	
+	public void addVectorToCenter(Vector vector) {
+		center.x += vector.dx;
+		center.y += vector.dy;
+		
+		angle += vector.dx / trueRadius;
+		angle %= Math.PI * 2;
 	}
 
 	public void draw(Graphics2D g2d, Camera camera) {
