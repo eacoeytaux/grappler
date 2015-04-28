@@ -89,18 +89,19 @@ public class Player {
 				
 			}
 			
-			/*AbsMapElement collidedElement = map.getCollision(tempVel, currentElement);
+			AbsMapElement collidedElement = null;//map.getCollision(tempVel, currentElement);
 			
 			if (collidedElement != null) { //collision detected
 				
-				//Coordinate collision = collidedElement.findCollision(line)
+				Coordinate collisionCoor = collidedElement.findCollision(tempVel.toLine());
+				float percentage = (float)Constants.distance(tempVel.origin, collisionCoor) / (float)velMag;
 				
+				currentElement = collidedElement;
 				
-				//double nextMag = velMag - Constants.distance(tempVel.origin, collisionCoor);
 			} else { //no collision
 				addVectorToCenter(tempVel);
 				break;
-			}*/
+			}
 		}
 
 		
