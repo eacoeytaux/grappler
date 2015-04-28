@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
+import main.Constants;
+
 public class Map {
 	boolean showBumpers = true;
 
@@ -68,7 +70,34 @@ public class Map {
 	}
 	
 	public Coordinate getCollision(Vector vel, MapEdge currentEdge, MapVertex currentVertex) {
-		return null;
+		Coordinate closestIntersection = null;
+		
+		Line vectorLine = new Line(vel.origin.x, vel.origin.y, vel.origin.x+vel.dx, vel.origin.y+vel.dy);
+		
+		for( MapEdge edge: edges){
+			if (edge != currentEdge){
+				Coordinate coor = vectorLine.intersection(edge.frontBumperLine);
+				if(coor != null){
+					if(closestIntersection == null){
+						closestIntersection = coor;
+					}else{
+						if( Constants.distance(coor, vel.origin) < Constants.distance(closestIntersection, vel.origin)){
+							closestIntersection = coor;
+						}
+					}
+				}
+			}
+		}
+		
+		return closestIntersection;
+		
+		/*
+		for( MapVertex vertex: vertices){
+			if (vertex != currentVertex){
+				//TODO
+			}
+		}
+		*/
 	}
 
 	private MapVertex createMapVertex(Coordinate coor) {

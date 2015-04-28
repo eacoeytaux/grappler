@@ -27,4 +27,5 @@ public class MapEdge extends AbsMapElement {
 		
 		this.hookable = hookable;
 	}
+	
 }
