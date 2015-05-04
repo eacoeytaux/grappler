@@ -13,7 +13,7 @@ public class Player {
 	//trail
 	ArrayList<Coordinate> positionMemory;
 	int positionMemoryFreq = 2; 
-	int positionMemoryCap = 4;
+	int positionMemoryCap = 16;
 
 
 	Color color;
@@ -80,7 +80,7 @@ public class Player {
 		Vector tempVel = new Vector(vel.origin, vel.dx, vel.dy);
 		//double nextVelMag = vel.getMagnitude(); //TODO apply this to the next velocity
 		
-		//TODO set magnitude of next velocity to appropiate magnitude
+		//TODO set magnitude of next velocity to appropriate magnitude
 		while ((tempVel.dx != 0) || (tempVel.dy != 0)) {
 			double velMag = tempVel.getMagnitude();
 			
@@ -94,7 +94,8 @@ public class Player {
 			if (collidedElement != null) { //collision detected
 				Coordinate collisionCoor = collidedElement.findCollision(tempVel.toLine());
 				float percentage = 1f - (float)Constants.distance(tempVel.origin, collisionCoor) / (float)velMag;
-				
+				center.x = collisionCoor.x;
+				center.y = collisionCoor.y;
 				currentElement = collidedElement;
 				tempVel = new Vector(collisionCoor, tempVel.dx * percentage, tempVel.dy * percentage);
 			} else { //no collision
@@ -129,6 +130,7 @@ public class Player {
 	public void addVectorToCenter(Vector vector) {
 		center.x += vector.dx;
 		center.y += vector.dy;
+		vel.origin = center;
 		
 		angle += vector.dx / trueRadius;
 		angle %= Math.PI * 2;
@@ -143,21 +145,28 @@ public class Player {
 			return;
 		}
 		
-		float opacity = 0.3f;
-		float opacityDecreaseValue = 0.05f;
+		float percentage = 1f;
+		float percentageDecreaseValue = 0.05f;
+		float opacity = 0.02f * 8f;
+		float opacityDecreaseValue = 0.02f;
 		for (Coordinate coor : positionMemory) {
+			percentage -= percentageDecreaseValue;
 			opacity -= opacityDecreaseValue;
-			drawCircleOutline(g2d, camera, coor, opacity);
-			drawCircle(g2d, camera, coor, opacity);
+			
+			if (percentage < 0) percentage = 0;
+			if (opacity < 0) opacity = 0;
+			
+			drawCircleOutline(g2d, camera, coor, percentage, opacity);
+			drawCircle(g2d, camera, coor, percentage, opacity);
 		}
 
-		drawCircleOutline(g2d, camera, center, 1);
+		drawCircleOutline(g2d, camera, center, 1, 1);
 
 		g2d.setColor(Color.BLACK);
 		g2d.setStroke(new BasicStroke(3));
 		g2d.fillArc(camera.xAdjust(center.x - barRadius), camera.yAdjust(center.y - barRadius), barRadius * 2, barRadius * 2, (int)Math.toDegrees(-angle), (int)(-barPercentage * 360));
 
-		drawCircle(g2d, camera, center, 1);
+		drawCircle(g2d, camera, center, 1, 1);
 
 		g2d.setColor(color);
 		g2d.drawLine((int)center.x, (int)center.y, (int)(center.x + (colorRadius * Math.cos(angle))), (int)(center.y + (colorRadius * Math.sin(angle))));
@@ -181,19 +190,21 @@ public class Player {
 		}
 	}
 
-	public void drawCircleOutline(Graphics2D g2d, Camera camera, Coordinate center, float opacity) {
+	public void drawCircleOutline(Graphics2D g2d, Camera camera, Coordinate center, float percentage, float opacity) {
 		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
-
 		g2d.setColor(color);
-		g2d.fillOval(camera.xAdjust(center.x - trueRadius), camera.yAdjust(center.y - trueRadius), trueRadius * 2, trueRadius * 2);
+		
+		int tempRadius = (int)(trueRadius * percentage);
+		g2d.fillOval(camera.xAdjust(center.x - tempRadius), camera.yAdjust(center.y - tempRadius), tempRadius * 2, tempRadius * 2);
 
 	}
 
-	public void drawCircle(Graphics2D g2d, Camera camera, Coordinate center, float opacity) {
+	public void drawCircle(Graphics2D g2d, Camera camera, Coordinate center, float percentage, float opacity) {
 		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
-
 		g2d.setColor(Color.WHITE);
-		g2d.fillOval(camera.xAdjust(center.x - colorRadius), camera.yAdjust(center.y - colorRadius), colorRadius * 2, colorRadius * 2);
+		
+		int tempRadius = (int)(colorRadius * percentage);
+		g2d.fillOval(camera.xAdjust(center.x - tempRadius), camera.yAdjust(center.y - tempRadius), tempRadius * 2, tempRadius * 2);
 
 	}
 }

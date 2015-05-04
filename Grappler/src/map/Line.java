@@ -54,6 +54,10 @@ public class Line {
 			yAdjustment = 0;
 		}
 	}
+	
+	public boolean inLine(Coordinate coor) {
+		return inLine(coor.x, coor.y);
+	}
 
 	public boolean inLine(double x, double y) {
 		if (vertical) {
