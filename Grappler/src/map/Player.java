@@ -138,13 +138,6 @@ public class Player {
 
 	public void draw(Graphics2D g2d, Camera camera) {
 		
-		//for debugging
-		if (false) {
-			g2d.setColor(Color.WHITE);
-			g2d.drawOval(camera.xAdjust(center.x - 2), camera.xAdjust(center.y - 2), 4, 4);
-			return;
-		}
-		
 		float percentage = 1f;
 		float percentageDecreaseValue = 0.05f;
 		float opacity = 0.02f * 8f;
