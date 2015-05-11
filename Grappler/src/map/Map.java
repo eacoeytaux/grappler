@@ -98,6 +98,7 @@ public class Map {
 		
 		return closestElement;
 	}
+	
 
 	private MapVertex createMapVertex(Coordinate coor) {
 		MapVertex mapVertex = new MapVertex(this, coor);

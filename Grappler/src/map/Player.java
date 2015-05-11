@@ -87,7 +87,16 @@ public class Player {
 			//adjust velocity vector
 			if (currentElement != null) {
 				currentElement.adjustVector(tempVel);
+				
+				Coordinate exitCoor = currentElement.checkExit(tempVel.toLine());
+				
+				if(exitCoor != null){
+					currentElement = currentElement.getExitElement(tempVel.toLine());
+					//tempVel = new Vector(exitCoor, -tempVel.dx, -tempVel.dy);
+				}
 			}
+			
+
 			
 			AbsMapElement collidedElement = map.getCollision(tempVel, currentElement);
 			
@@ -102,13 +111,16 @@ public class Player {
 				addVectorToCenter(tempVel);
 				break;
 			}
+			
 		}
 
 		
 		/*
 		if (currentEdge != null) {
 			
-		} else if (currentVertex != null) {
+		} 
+		
+		else if (currentVertex != null) {
 			
 		} else {
 			

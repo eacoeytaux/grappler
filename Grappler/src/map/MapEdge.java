@@ -32,6 +32,42 @@ public class MapEdge extends AbsMapElement {
 		return bumper.intersection(line);
 	}
 	
+	//Checks for collisions with catch lines
+	public Coordinate checkExit(Line line) {
+		Coordinate exitCoor = null;
+		
+		Coordinate right = rightCatchLine.intersection(line);
+		Coordinate left = leftCatchLine.intersection(line);
+		
+		if(right == null && left == null){
+			exitCoor = null;
+			System.out.println("none");
+		}
+		else if(right == null){
+			exitCoor = left;
+			System.out.println("left");
+		}else{
+			exitCoor = right;
+			System.out.println("right");
+		}
+		
+		return exitCoor;
+	}
+	
+	public AbsMapElement getExitElement(Line line){
+		//the element that the player will transfer onto 
+		AbsMapElement exitElement = null;
+		
+		if( rightCatchLine.intersection(line) != null){
+			exitElement = this.rightVertex;
+		}else if(rightCatchLine.intersection(line) != null){
+			exitElement = this.leftVertex;
+		}
+		
+		return exitElement;
+		
+	}
+	
 	public boolean adjustVector(Vector vector) {
 		double adjustedValue = vector.toLine().angle - line.angle;
 		if ((adjustedValue < 0) || (adjustedValue > Math.PI)) return false;
@@ -43,4 +79,5 @@ public class MapEdge extends AbsMapElement {
 		
 		return true;
 	}
+	
 }

@@ -22,4 +22,15 @@ public class MapVertex extends AbsMapElement {
 	public boolean adjustVector(Vector vector) {
 		return true; //TODO something
 	}
+
+	public Coordinate checkExit(Line line) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public AbsMapElement getExitElement(Line line) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
