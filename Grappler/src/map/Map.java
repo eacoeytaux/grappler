@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import main.Constants;
 
 public class Map {
-	boolean showBumpers = true;
+	boolean showBumpers = false;
 
 	ArrayList<AbsMapElement> elements;
 	ArrayList<MapVertex> vertices;
