@@ -44,13 +44,16 @@ public class Player {
 	static final int borderWidth = 8;
 	static final int trueRadius = 32;
 	static final int colorRadius = trueRadius - borderWidth;
-	static final int barRadius = colorRadius + 4;
+	static final int barRadius = colorRadius + 5;
 
-	int[] xPoints = {0, colorRadius, (int)(0.70710678118 * colorRadius)};
-	int[] yPoints = {0, 0, (int)(0.70710678118 * colorRadius)};
+	int[] xPoints;
+	int[] yPoints;
 
 	float barPercentage;
 	float barIncreaseSpeed = 0.005f;
+
+	int edges = 16;
+	BufferedImage pattern;
 
 	public Player(Color color, Coordinate center) {
 		this.center = center;
@@ -71,6 +74,14 @@ public class Player {
 		currentElement = null;
 
 		barPercentage = 0;
+
+		try { //load images
+			pattern = ImageIO.read(getClass().getResourceAsStream("/pattern-5.jpg"));
+		} catch (IOException e) {
+			GamePanel.handleException(e);
+		}
+		
+		setClipRegion();
 	}
 
 	public void update(Map map, long counter) {
@@ -194,13 +205,28 @@ public class Player {
 			g2d.drawOval(camera.xAdjust(aimerCoor.x - 8), camera.yAdjust(aimerCoor.y - 8), 16, 16);
 		}
 
-		BufferedImage image = null;
-		try { //load images
-			image = ImageIO.read(getClass().getResourceAsStream("/pattern-1.png"));
-		} catch (IOException e) {
-			GamePanel.handleException(e);
-		}
+		drawKaleidoscope(g2d, camera);
+	}
 
+	public void drawCircleOutline(Graphics2D g2d, Camera camera, Coordinate center, float percentage, float opacity) {
+		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
+		g2d.setColor(color);
+
+		int tempRadius = (int)(trueRadius * percentage);
+		g2d.fillOval(camera.xAdjust(center.x - tempRadius), camera.yAdjust(center.y - tempRadius), tempRadius * 2, tempRadius * 2);
+
+	}
+
+	public void drawCircle(Graphics2D g2d, Camera camera, Coordinate center, float percentage, float opacity) {
+		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
+		g2d.setColor(Color.WHITE);
+
+		int tempRadius = (int)(colorRadius * percentage);
+		g2d.fillOval(camera.xAdjust(center.x - tempRadius - 2), camera.yAdjust(center.y - tempRadius - 2), tempRadius * 2 + 4, tempRadius * 2 + 4);
+
+	}
+
+	/*public void drawKaleidoscope8Edge(Graphics2D g2d, Camera camera) {
 		Polygon triangle = new Polygon(xPoints, yPoints, 3);
 		BufferedImage segment = new BufferedImage(400, 400, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = (Graphics2D)segment.getGraphics();
@@ -211,12 +237,12 @@ public class Player {
 			yPoints[i] += 1;
 		}
 
-		if (xPoints[2] >= image.getWidth()) {
+		if (xPoints[2] >= pattern.getWidth()) {
 			xPoints = new int[]{0, colorRadius, (int)(0.70710678118 * colorRadius)};
 			yPoints = new int[]{0, 0, (int)(0.70710678118 * colorRadius)};
 		}
 
-		g.drawImage(image, 0, 0, null);
+		g.drawImage(pattern, 0, 0, null);
 		g.dispose();
 
 		BufferedImage kal = new BufferedImage(colorRadius * 2, colorRadius * 2, BufferedImage.TYPE_INT_ARGB);
@@ -235,30 +261,64 @@ public class Player {
 		g2.drawImage(segment2, colorRadius - xPoints[0], (colorRadius - yPoints[0]) + 400, segment2.getWidth(), -segment2.getHeight(), null);
 		g2.drawImage(segment2, (colorRadius - xPoints[0]) + xPoints[0] * 2, ((colorRadius - yPoints[0]) + yPoints[0] * 2) - 400, -segment2.getWidth(), segment2.getHeight(), null);
 		g2.drawImage(segment2, (colorRadius - xPoints[0]) + xPoints[0] * 2, (colorRadius - yPoints[0]) + 400, -segment2.getWidth(), -segment2.getHeight(), null);
-		
+
 		tx = AffineTransform.getRotateInstance(angle, kal.getWidth() / 2, kal.getHeight() / 2);
 		op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
-		
+
 		kal = op.filter(kal, null);
-		
+
 		g2d.drawImage(kal, (int)center.x - colorRadius, (int)center.y - colorRadius, null);
+	}*/
+
+	public void drawKaleidoscope(Graphics2D g2d, Camera camera) {
+		
+		BufferedImage finalImage = new BufferedImage(colorRadius * 2, colorRadius * 2, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D gFinal = (Graphics2D)finalImage.getGraphics();
+		
+		gFinal.setColor(Color.BLACK);
+		gFinal.fillRect(colorRadius - 4, colorRadius - 4, 8, 8);
+		
+		//creates segment
+		Polygon triangle = new Polygon(xPoints, yPoints, 3);
+		BufferedImage segment = new BufferedImage(pattern.getWidth(), pattern.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		Graphics2D gSeg = (Graphics2D)segment.getGraphics();
+		gSeg.setClip(triangle);
+
+		//moves clipping segment
+		for (int i = 0; i < 3; i++) {
+			xPoints[i] += 1;
+			//yPoints[i] += 1;
+		}
+		if (xPoints[2] >= pattern.getWidth()) setClipRegion();
+
+		gSeg.drawImage(pattern, 0, 0, null);
+		gSeg.dispose();
+
+		//final kaleidoscope image (side note, how is this word not in the java dictionary??)
+		BufferedImage kal = new BufferedImage(colorRadius * 2, colorRadius * 2, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D gKal = (Graphics2D)kal.getGraphics();
+
+		gKal.drawImage(segment, colorRadius - xPoints[0], colorRadius - yPoints[0], segment.getWidth(), segment.getHeight(), null);
+		gKal.drawImage(segment, colorRadius - xPoints[0], (colorRadius - yPoints[0]) + yPoints[0] * 2, segment.getWidth(), -segment.getHeight(), null);
+
+		AffineTransform tx = AffineTransform.getRotateInstance(-Math.PI / (edges / 4), kal.getWidth() / 2, kal.getHeight() / 2);
+		AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+		
+		for (int i = 0; i < edges / 2; i++) {
+			kal = op.filter(kal, null);
+			gFinal.drawImage(kal, 0, 0, null);
+		}
+
+		tx = AffineTransform.getRotateInstance(angle, finalImage.getWidth() / 2, finalImage.getHeight() / 2);
+		op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+		finalImage = op.filter(finalImage, null);
+		
+		g2d.drawImage(finalImage, camera.xAdjust(center.x) - colorRadius, camera.yAdjust(center.y) - colorRadius, null);
+		
 	}
-
-	public void drawCircleOutline(Graphics2D g2d, Camera camera, Coordinate center, float percentage, float opacity) {
-		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
-		g2d.setColor(color);
-
-		int tempRadius = (int)(trueRadius * percentage);
-		g2d.fillOval(camera.xAdjust(center.x - tempRadius), camera.yAdjust(center.y - tempRadius), tempRadius * 2, tempRadius * 2);
-
-	}
-
-	public void drawCircle(Graphics2D g2d, Camera camera, Coordinate center, float percentage, float opacity) {
-		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
-		g2d.setColor(Color.WHITE);
-
-		int tempRadius = (int)(colorRadius * percentage);
-		g2d.fillOval(camera.xAdjust(center.x - tempRadius), camera.yAdjust(center.y - tempRadius), tempRadius * 2, tempRadius * 2);
-
+	
+	public void setClipRegion() {
+		xPoints = new int[]{0, colorRadius, (int)(Math.cos(Math.toRadians(90f / (edges / 4))) * colorRadius)};
+		yPoints = new int[]{0, 0, (int)(Math.sin(Math.toRadians(90f / (edges / 4))) * colorRadius)};
 	}
 }
