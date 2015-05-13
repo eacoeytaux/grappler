@@ -17,7 +17,6 @@ import main.Constants;
 import main.GamePanel;
 
 public class Player {
-
 	//trail
 	ArrayList<Coordinate> positionMemory;
 	int positionMemoryFreq = 2; 
@@ -56,7 +55,7 @@ public class Player {
 	int[] yPoints;
 	
 	double edges = 16;
-	String patternFileName = "pattern-6.jpg";
+	String patternFileName = "pattern-5.jpg";
 	BufferedImage pattern;
 
 	public Player(Color color, Coordinate center) {
@@ -102,7 +101,7 @@ public class Player {
 		}
 
 		//add forces to velocity
-		//vel.addVector(gravity);
+		vel.addVector(gravity);
 
 		Vector tempVel = new Vector(vel.origin, vel.dx, vel.dy);
 		//double nextVelMag = vel.getMagnitude(); //TODO apply this to the next velocity

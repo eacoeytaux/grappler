@@ -25,7 +25,7 @@ public class Map {
 		
 		MapVertex v0 = createMapVertex(new Coordinate(0, 0));
 		MapVertex v1 = createMapVertex(new Coordinate(10, 300));
-		MapVertex v2 = createMapVertex(new Coordinate(150, 350));
+		MapVertex v2 = createMapVertex(new Coordinate(150, 310));
 		MapVertex v3 = createMapVertex(new Coordinate(250, 420));
 		MapVertex v4 = createMapVertex(new Coordinate(400, 350));
 		MapVertex v5 = createMapVertex(new Coordinate(450, 375));
