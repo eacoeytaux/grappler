@@ -55,8 +55,8 @@ public class Player {
 	int[] xPoints;
 	int[] yPoints;
 	
-	int edges = 16;
-	String patternFileName = "pattern-5.jpg";
+	double edges = 16;
+	String patternFileName = "pattern-6.jpg";
 	BufferedImage pattern;
 
 	public Player(Color color, Coordinate center) {
@@ -245,6 +245,7 @@ public class Player {
 		Polygon triangle = new Polygon(xPoints, yPoints, 3);
 		BufferedImage segment = new BufferedImage(pattern.getWidth(), pattern.getHeight(), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D gSeg = (Graphics2D)segment.getGraphics();
+		//gSeg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		gSeg.setClip(triangle);
 
 		//moves clipping segment

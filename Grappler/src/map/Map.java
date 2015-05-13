@@ -25,7 +25,7 @@ public class Map {
 		
 		MapVertex v0 = createMapVertex(new Coordinate(0, 0));
 		MapVertex v1 = createMapVertex(new Coordinate(10, 300));
-		MapVertex v2 = createMapVertex(new Coordinate(150, 310));
+		MapVertex v2 = createMapVertex(new Coordinate(150, 350));
 		MapVertex v3 = createMapVertex(new Coordinate(250, 420));
 		MapVertex v4 = createMapVertex(new Coordinate(400, 350));
 		MapVertex v5 = createMapVertex(new Coordinate(450, 375));
@@ -48,8 +48,8 @@ public class Map {
 	}
 
 	public void draw(Graphics2D g2d, Camera camera) {
-		g2d.setStroke(new BasicStroke(2));
 		for (MapEdge edge : edges) {
+			g2d.setStroke(new BasicStroke(edge.hookable ? 2 : 4));
 			g2d.setColor(Color.WHITE);
 			g2d.drawLine(camera.xAdjust(edge.line.coor1.x), camera.yAdjust((int)edge.line.coor1.y), camera.xAdjust((int)edge.line.coor2.x), camera.yAdjust((int)edge.line.coor2.y));
 			if (showBumpers) {
@@ -61,6 +61,7 @@ public class Map {
 				g2d.drawLine(camera.xAdjust(edge.rightCatchLine.coor1.x), camera.yAdjust((int)edge.rightCatchLine.coor1.y), camera.xAdjust((int)edge.rightCatchLine.coor2.x), camera.yAdjust((int)edge.rightCatchLine.coor2.y));
 			}
 		}
+		g2d.setStroke(new BasicStroke(2));
 		for (MapVertex vertex : vertices) {
 			//g2d.setColor(Color.YELLOW);
 			//g2d.drawOval(camera.xAdjust(vertex.coordinate.x) - 4, camera.yAdjust(vertex.coordinate.y) - 4, 8, 8);
@@ -75,19 +76,18 @@ public class Map {
 		AbsMapElement closestElement = null;
 		double distanceToElement = 0;
 		
-		
 		Line vectorLine = vel.toLine();
 		
-		for( AbsMapElement element: elements){
-			if (element != currentElement){
+		for (AbsMapElement element : elements) {
+			if (element != currentElement) {
 				Coordinate coor = element.findCollision(vectorLine);
 				if(coor != null){
 					double dist =  Constants.distance(coor, vel.origin);
-					if(closestElement == null){
+					if (closestElement == null) {
 						closestElement = element;
 						distanceToElement = dist;
-					}else{
-						if( dist < distanceToElement){
+					} else {
+						if (dist < distanceToElement) {
 							closestElement = element;
 							distanceToElement = dist;
 						}
