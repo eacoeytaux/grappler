@@ -32,11 +32,20 @@ public class MapEdge extends AbsMapElement {
 		return bumper.intersection(line);
 	}
 	
+	public Coordinate findTrapCollision(Line line) {
+		Coordinate coor = rightCatchLine.intersection(line);
+		if (coor == null) coor = leftCatchLine.intersection(line);
+		return coor;
+	}
+	
 	public boolean adjustVector(Vector vector) {
 		double adjustedValue = vector.toLine().angle - line.angle;
-		if ((adjustedValue < 0) || (adjustedValue > Math.PI)) return false;
+		System.out.println(Math.toDegrees(vector.toLine().angle));
+		if ((adjustedValue < 0) || (adjustedValue > Math.PI)) {
+			//return false;
+		}
 		
-		double newMag = Math.sin(line.angle) * vector.getMagnitude();
+		double newMag = Math.sin(line.angle + ((Math.PI / 2) - vector.toLine().angle)) * vector.getMagnitude();
 		
 		vector.dx = Math.cos(line.angle) * newMag;
 		vector.dy = Math.sin(line.angle) * newMag;

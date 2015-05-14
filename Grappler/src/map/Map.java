@@ -6,9 +6,10 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 import main.Constants;
+import main.Grappler;
 
 public class Map {
-	boolean showBumpers = false;
+	boolean showBumpers = Grappler.DEBUG;
 
 	ArrayList<AbsMapElement> elements;
 	ArrayList<MapVertex> vertices;
@@ -24,8 +25,8 @@ public class Map {
 		edges = new ArrayList<MapEdge>();
 		
 		MapVertex v0 = createMapVertex(new Coordinate(0, 0));
-		MapVertex v1 = createMapVertex(new Coordinate(10, 300));
-		MapVertex v2 = createMapVertex(new Coordinate(150, 310));
+		MapVertex v1 = createMapVertex(new Coordinate(0, 300));
+		MapVertex v2 = createMapVertex(new Coordinate(150, 350));
 		MapVertex v3 = createMapVertex(new Coordinate(250, 420));
 		MapVertex v4 = createMapVertex(new Coordinate(400, 350));
 		MapVertex v5 = createMapVertex(new Coordinate(450, 375));
@@ -92,6 +93,13 @@ public class Map {
 							distanceToElement = dist;
 						}
 					}
+				}
+			} else {
+				Coordinate coor = element.findTrapCollision(vectorLine);
+				if (coor != null) {
+					//at this point we know element is a MapEdge
+					//MapEdge edge = (MapEdge)element;
+					//TODO
 				}
 			}
 		}

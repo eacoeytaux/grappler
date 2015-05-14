@@ -96,11 +96,13 @@ public class Line {
 	}
 	
 	public double getPerpendicularDx(double distance) {
-		return yAdjustment * distance;
+		if (vertical) return distance;
+		else return yAdjustment * distance;
 	}
 	
 	public double getPerpendicularDy(double distance) {
-		return xAdjustment * -distance;
+		if (vertical) return 0;
+		else return xAdjustment * -distance;
 	}
 		
 		/*

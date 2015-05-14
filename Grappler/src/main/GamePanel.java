@@ -17,7 +17,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 	public final int WIDTH = 960;
 	public final int HEIGHT = 640;
 
-	public final int FPS = 60;
+	public final int FPS = 60; //aiming for 60
 	public final long targetTime = 1000 / FPS;
 	
 	GamePanel self;

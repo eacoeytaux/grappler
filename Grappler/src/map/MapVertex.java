@@ -19,6 +19,10 @@ public class MapVertex extends AbsMapElement {
 		return null; //TODO something
 	}
 	
+	public Coordinate findTrapCollision(Line line) {
+		return null; //TODO maybe something? maybe keep null...
+	}
+	
 	public boolean adjustVector(Vector vector) {
 		return true; //TODO something
 	}
