@@ -32,7 +32,12 @@ public class Player {
 
 	double velocityMagnitude;
 
-	Vector gravity = new Vector(null, 0, 0.1);;
+	Vector gravity = new Vector(null, 0, 0.1);
+	
+	Vector rightPush = new Vector(null, 0.1, 0);
+	Vector leftPush = new Vector(null, -0.1, 0);
+	boolean movingRight;
+	boolean movingLeft;
 
 	AbsMapElement currentElement;
 
@@ -105,6 +110,8 @@ public class Player {
 
 		//add forces to velocity
 		vel.addVector(gravity);
+		if (movingRight) vel.addVector(rightPush);
+		if (movingLeft) vel.addVector(leftPush);
 		
 		//System.out.println(Math.toDegrees(vel.toLine().angle));
 
@@ -119,6 +126,8 @@ public class Player {
 			if (currentElement != null) {
 				currentElement.adjustVector(tempVel);
 			}
+			
+			System.out.println(tempVel.getMagnitude());
 
 			AbsMapElement collidedElement = map.getCollision(tempVel, currentElement);
 
@@ -128,6 +137,11 @@ public class Player {
 				center.x = collisionCoor.x;
 				center.y = collisionCoor.y;
 				currentElement = collidedElement;
+				
+				//MapEdge edge = (MapEdge)collidedElement;
+				//rightPush = new Vector(null, Math.cos(edge.line.angle) * 0.1, 0);
+				//leftPush = new Vector(null, Math.cos(edge.line.angle) * -0.1, 0);
+				
 				tempVel = new Vector(collisionCoor, tempVel.dx * percentage, tempVel.dy * percentage);
 			} else { //no collision
 				addVectorToCenter(tempVel);
@@ -298,5 +312,13 @@ public class Player {
 		int radius = kaleidoscopeRadius - kaleidoscopeBufferWidth;
 		yPoints = new int[]{0, radius, (int)(Math.cos(Math.toRadians(90f / (segments / 2))) * radius)};
 		xPoints = new int[]{0, 0, (int)(Math.sin(Math.toRadians(90f / (segments / 2))) * radius)};
+	}
+	
+	public void setMovingRight(boolean b) {
+		movingRight = b;
+	}
+	
+	public void setMovingLeft(boolean b) {
+		movingLeft = b;
 	}
 }

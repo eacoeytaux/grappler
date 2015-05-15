@@ -25,24 +25,14 @@ public class Map {
 		edges = new ArrayList<MapEdge>();
 
 		MapVertex v0 = createMapVertex(new Coordinate(0, 0));
-		MapVertex v1 = createMapVertex(new Coordinate(0, 300));
-		MapVertex v2 = createMapVertex(new Coordinate(150, 350));
-		MapVertex v3 = createMapVertex(new Coordinate(250, 420));
-		MapVertex v4 = createMapVertex(new Coordinate(500, 280));
-		MapVertex v5 = createMapVertex(new Coordinate(450, 375));
-		MapVertex v6 = createMapVertex(new Coordinate(500, 350));
-		MapVertex v7 = createMapVertex(new Coordinate(800, 400));
-		MapVertex v8 = createMapVertex(new Coordinate(750, 0));
-
-		/*MapVertex v0 = createMapVertex(new Coordinate(0, 0));
-		MapVertex v1 = createMapVertex(new Coordinate(0, 300));
+		MapVertex v1 = createMapVertex(new Coordinate(10, 300));
 		MapVertex v2 = createMapVertex(new Coordinate(150, 350));
 		MapVertex v3 = createMapVertex(new Coordinate(250, 420));
 		MapVertex v4 = createMapVertex(new Coordinate(400, 350));
 		MapVertex v5 = createMapVertex(new Coordinate(450, 375));
 		MapVertex v6 = createMapVertex(new Coordinate(500, 350));
 		MapVertex v7 = createMapVertex(new Coordinate(800, 400));
-		MapVertex v8 = createMapVertex(new Coordinate(750, 0));*/
+		MapVertex v8 = createMapVertex(new Coordinate(750, 0));
 
 		createMapEdge(v0, v1, false);
 		createMapEdge(v1, v2, true);
@@ -94,7 +84,6 @@ public class Map {
 			if (element != currentElement) {
 				Coordinate coor = element.findCollision(vectorLine);
 				if(coor != null){
-					System.out.println("HERE");
 					double dist =  Constants.distance(coor, vel.origin);
 					if (closestElement == null) {
 						closestElement = element;

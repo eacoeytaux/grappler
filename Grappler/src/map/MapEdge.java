@@ -10,7 +10,7 @@ public class MapEdge extends AbsMapElement {
 	public Line rightCatchLine;
 	public Line leftCatchLine;
 	public boolean hookable;
-	public float friction = 1f;
+	public float friction = 0.99f;
 
 	public MapEdge(Map map, MapVertex leftVertex, MapVertex rightVertex, boolean hookable) {
 		super("Edge");
@@ -60,7 +60,6 @@ public class MapEdge extends AbsMapElement {
 		if (lineAngle < 0) lineAngle = (Math.PI * 2) + lineAngle;*/
 
 		double adjustedValue = vectorAngle - line.angle;
-		//System.out.println(Math.toDegrees(adjustedValue));
 		if ((adjustedValue < 0) || (adjustedValue > Math.PI)) {
 			//return false;
 		}
@@ -74,8 +73,8 @@ public class MapEdge extends AbsMapElement {
 		if (vector.dx < 0) newMag *= -1;
 		//line.angle + ((Math.PI / 2) - vectorAngle)
 		
-		vector.dx = Math.cos(line.angle) * newMag;
-		vector.dy = Math.sin(line.angle) * newMag;
+		vector.dx = Math.cos(line.angle) * newMag * friction;
+		vector.dy = Math.sin(line.angle) * newMag * friction;
 
 		return true;
 	}

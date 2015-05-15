@@ -40,6 +40,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 		setPreferredSize(new Dimension(WIDTH, HEIGHT));
 		setFocusable(true);
 		requestFocus();
+
+		engine = new Engine(self);
 	}
 
 	@Override
@@ -59,8 +61,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 		running = true;
 		paused = false;
 
-		engine = new Engine(self);
-
 		runningThread = new Thread() {
 			@Override
 			public void run() {
@@ -70,7 +70,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 				while (running) {
 					if (paused) {
 						try {
-							Thread.sleep(1000);
+							Thread.sleep(100);
 						} catch (InterruptedException e) {
 							handleException(e);
 						}
@@ -100,7 +100,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 				while (running) {
 					if (paused) {
 						try {
-							Thread.sleep(1000);
+							Thread.sleep(100);
 						} catch (InterruptedException e) {
 							handleException(e);
 						}
@@ -125,6 +125,23 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 		graphicsThread.start();
 	}
 
+	public void pause() {
+		/*if (!paused) {
+			running = false;
+			try {
+				runningThread.wait();
+				graphicsThread.wait();
+			} catch (InterruptedException e) {
+				handleException(e);
+			}
+		} else {
+			running = true;
+			runningThread.notify();
+			graphicsThread.notify();
+		}*/
+		paused = !paused;
+	}
+
 	public void updateScreen() {
 		Graphics g2d = getGraphics();
 		g2d.drawImage(image, 0, 0, null);
@@ -137,12 +154,14 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_P) paused = !paused;
+		if (e.getKeyCode() == KeyEvent.VK_P) pause();
 		engine.keyPressed(e);
 	}
 
 	@Override
-	public void keyReleased(KeyEvent e) { }
+	public void keyReleased(KeyEvent e) {
+		engine.keyReleased(e);
+	}
 
 	@Override
 	public void keyTyped(KeyEvent e) { }

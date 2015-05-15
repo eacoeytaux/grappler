@@ -17,7 +17,7 @@ public class Line {
 	}
 
 	public Line(double x1, double y1, double x2, double y2) {
-		/*if (x1 <= x2) {
+		if (x1 <= x2) {
 			if ((x1 == x2) && (y1 > y2)) {
 				double temp = y1;
 				y1 = y2;
@@ -33,7 +33,7 @@ public class Line {
 			temp = y1;
 			y1 = y2;
 			y2 = temp;
-		}*/
+		}
 			
 		coor1 = new Coordinate(x1, y1);
 		coor2 = new Coordinate(x2, y2);

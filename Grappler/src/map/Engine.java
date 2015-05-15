@@ -71,6 +71,13 @@ public class Engine {
 
 	public void keyPressed(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_R) reset = true;
+		if (e.getKeyCode() == KeyEvent.VK_A) p1.setMovingLeft(true);
+		if (e.getKeyCode() == KeyEvent.VK_D) p1.setMovingRight(true);
+	}
+	
+	public void keyReleased(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_A) p1.setMovingLeft(false);
+		if (e.getKeyCode() == KeyEvent.VK_D) p1.setMovingRight(false);
 	}
 
 	public void loadColorSchemes() {
