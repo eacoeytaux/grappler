@@ -19,16 +19,18 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 
 	public final int FPS = 60; //aiming for 60
 	public final long targetTime = 1000 / FPS;
-	
+
 	GamePanel self;
 	Thread thread;
 	Thread runningThread;
 	Thread graphicsThread;
 	boolean running;
-	
+
+	boolean paused;
+
 	int runningMissedDeadlines;
 	int graphicsMissedDeadlines;
-	
+
 	Engine engine;
 	BufferedImage image;
 
@@ -55,6 +57,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 	@Override
 	public void run() {
 		running = true;
+		paused = false;
+
 		engine = new Engine(self);
 
 		runningThread = new Thread() {
@@ -64,21 +68,29 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 				int missedDeadlines = 0;
 				long start, elapsed, wait;
 				while (running) {
-					start = System.nanoTime();
-					engine.update();
-					elapsed = System.nanoTime() - start;
-					wait = targetTime - (elapsed / 1000000);
-					if (wait >= 0) {
+					if (paused) {
 						try {
-							Thread.sleep(wait);
-						} catch(Exception e) {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
 							handleException(e);
 						}
-					} //else System.out.println("runningThread missed deadline! - Total:" + ++missedDeadlines);
+					} else {
+						start = System.nanoTime();
+						engine.update();
+						elapsed = System.nanoTime() - start;
+						wait = targetTime - (elapsed / 1000000);
+						if (wait >= 0) {
+							try {
+								Thread.sleep(wait);
+							} catch(Exception e) {
+								handleException(e);
+							}
+						} //else System.out.println("runningThread missed deadline! - Total:" + ++missedDeadlines);
+					}
 				}
 			}
 		};
-		
+
 		graphicsThread = new Thread() {
 			@Override
 			public void run() {
@@ -86,21 +98,29 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 				int missedDeadlines = 0;
 				long start, elapsed, wait;
 				while (running) {
-					start = System.nanoTime();
-					updateScreen();
-					elapsed = System.nanoTime() - start;
-					wait = targetTime - (elapsed / 1000000);
-					if (wait >= 0) {
+					if (paused) {
 						try {
-							Thread.sleep(wait);
-						} catch(Exception e) {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
 							handleException(e);
 						}
-					} //else System.out.println("graphicsThread missed deadline! - Total:" + ++missedDeadlines);
+					} else {
+						start = System.nanoTime();
+						updateScreen();
+						elapsed = System.nanoTime() - start;
+						wait = targetTime - (elapsed / 1000000);
+						if (wait >= 0) {
+							try {
+								Thread.sleep(wait);
+							} catch(Exception e) {
+								handleException(e);
+							}
+						} //else System.out.println("graphicsThread missed deadline! - Total:" + ++missedDeadlines);
+					}
 				}
 			}
 		};
-		
+
 		runningThread.start();
 		graphicsThread.start();
 	}
@@ -117,6 +137,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 
 	@Override
 	public void keyPressed(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_P) paused = !paused;
 		engine.keyPressed(e);
 	}
 
@@ -140,7 +161,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 
 	@Override
 	public void mouseReleased(MouseEvent e) { }
-	
+
 	public static void handleException(Exception e) {
 		e.printStackTrace();
 	}

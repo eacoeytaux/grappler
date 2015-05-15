@@ -105,12 +105,14 @@ public class Player {
 
 		//add forces to velocity
 		vel.addVector(gravity);
+		
+		//System.out.println(Math.toDegrees(vel.toLine().angle));
 
 		Vector tempVel = vel;//new Vector(vel.origin, vel.dx, vel.dy);
 		//double nextVelMag = vel.getMagnitude(); //TODO apply this to the next velocity
 
 		//TODO set magnitude of next velocity to appropriate magnitude
-		while ((tempVel.dx != 0) || (tempVel.dy != 0)) {
+		//while ((tempVel.dx != 0) || (tempVel.dy != 0)) {
 			double velMag = tempVel.getMagnitude();
 
 			//adjust velocity vector
@@ -129,9 +131,9 @@ public class Player {
 				tempVel = new Vector(collisionCoor, tempVel.dx * percentage, tempVel.dy * percentage);
 			} else { //no collision
 				addVectorToCenter(tempVel);
-				break;
+				//break;
 			}
-		}
+		//}
 
 
 		/*
@@ -209,7 +211,7 @@ public class Player {
 		} else { //draws velocity vector
 			g2d.setStroke(new BasicStroke(1));
 			g2d.setColor(Color.BLACK);
-			g2d.drawLine((int)vel.origin.x, (int)vel.origin.y, (int)(vel.origin.x + vel.dx * 1), (int)(vel.origin.y + vel.dy * 1));
+			g2d.drawLine((int)vel.origin.x, (int)vel.origin.y, (int)(vel.origin.x + vel.dx * 10), (int)(vel.origin.y + vel.dy * 10));
 		}
 
 		//draw aimer

@@ -38,7 +38,7 @@ public class Engine {
 		background = new TriangleBackground(parentPanel.WIDTH, parentPanel.HEIGHT, ColorSchemes.getScheme("BLUE"));
 
 		map = new Map();
-		p1 = new Player(Color.ORANGE, new Coordinate(50, 50));
+		p1 = new Player(Color.ORANGE, new Coordinate(100, 50));
 		reset = false;
 	}
 

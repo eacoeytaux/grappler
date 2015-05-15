@@ -7,6 +7,7 @@ public class MapVertex extends AbsMapElement {
 	public MapEdge leftEdge;
 	
 	public MapVertex(Map map, Coordinate coordinate) {
+		super("Vertex");
 		this.parent = map;
 		this.coordinate = coordinate;
 	}

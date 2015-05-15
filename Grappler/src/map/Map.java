@@ -23,8 +23,18 @@ public class Map {
 		elements = new ArrayList<AbsMapElement>();
 		vertices = new ArrayList<MapVertex>();
 		edges = new ArrayList<MapEdge>();
-		
+
 		MapVertex v0 = createMapVertex(new Coordinate(0, 0));
+		MapVertex v1 = createMapVertex(new Coordinate(0, 300));
+		MapVertex v2 = createMapVertex(new Coordinate(150, 350));
+		MapVertex v3 = createMapVertex(new Coordinate(250, 420));
+		MapVertex v4 = createMapVertex(new Coordinate(500, 280));
+		MapVertex v5 = createMapVertex(new Coordinate(450, 375));
+		MapVertex v6 = createMapVertex(new Coordinate(500, 350));
+		MapVertex v7 = createMapVertex(new Coordinate(800, 400));
+		MapVertex v8 = createMapVertex(new Coordinate(750, 0));
+
+		/*MapVertex v0 = createMapVertex(new Coordinate(0, 0));
 		MapVertex v1 = createMapVertex(new Coordinate(0, 300));
 		MapVertex v2 = createMapVertex(new Coordinate(150, 350));
 		MapVertex v3 = createMapVertex(new Coordinate(250, 420));
@@ -32,7 +42,7 @@ public class Map {
 		MapVertex v5 = createMapVertex(new Coordinate(450, 375));
 		MapVertex v6 = createMapVertex(new Coordinate(500, 350));
 		MapVertex v7 = createMapVertex(new Coordinate(800, 400));
-		MapVertex v8 = createMapVertex(new Coordinate(750, 0));
+		MapVertex v8 = createMapVertex(new Coordinate(750, 0));*/
 
 		createMapEdge(v0, v1, false);
 		createMapEdge(v1, v2, true);
@@ -72,17 +82,19 @@ public class Map {
 			}
 		}
 	}
-	
+
 	public AbsMapElement getCollision(Vector vel, AbsMapElement currentElement) {
 		AbsMapElement closestElement = null;
+
 		double distanceToElement = 0;
-		
+
 		Line vectorLine = vel.toLine();
-		
+
 		for (AbsMapElement element : elements) {
 			if (element != currentElement) {
 				Coordinate coor = element.findCollision(vectorLine);
 				if(coor != null){
+					System.out.println("HERE");
 					double dist =  Constants.distance(coor, vel.origin);
 					if (closestElement == null) {
 						closestElement = element;
@@ -103,7 +115,7 @@ public class Map {
 				}
 			}
 		}
-		
+
 		return closestElement;
 	}
 
@@ -120,6 +132,9 @@ public class Map {
 		rightVertex.leftEdge = mapEdge;
 		edges.add(mapEdge);
 		elements.add(mapEdge);
+
+		if (Grappler.DEBUG) System.out.println(mapEdge.id + " angle : " + Math.toDegrees(mapEdge.line.angle));
+
 		return mapEdge;
 	}
 }
