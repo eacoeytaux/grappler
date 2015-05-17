@@ -20,6 +20,7 @@ public class Map {
 	}
 
 	public void loadMap() {
+		AbsMapElement.resetId();
 		elements = new ArrayList<AbsMapElement>();
 		vertices = new ArrayList<MapVertex>();
 		edges = new ArrayList<MapEdge>();
@@ -45,7 +46,7 @@ public class Map {
 	}
 
 	public void update(long counter) {
-		//TODO
+		//TODO if map moves
 	}
 
 	public void draw(Graphics2D g2d, Camera camera) {
@@ -62,12 +63,10 @@ public class Map {
 				g2d.drawLine(camera.xAdjust(edge.rightCatchLine.coor1.x), camera.yAdjust((int)edge.rightCatchLine.coor1.y), camera.xAdjust((int)edge.rightCatchLine.coor2.x), camera.yAdjust((int)edge.rightCatchLine.coor2.y));
 			}
 		}
-		g2d.setStroke(new BasicStroke(2));
-		for (MapVertex vertex : vertices) {
-			//g2d.setColor(Color.YELLOW);
-			//g2d.drawOval(camera.xAdjust(vertex.coordinate.x) - 4, camera.yAdjust(vertex.coordinate.y) - 4, 8, 8);
-			if (showBumpers) {
-				g2d.setColor(Color.GREEN);
+		if (showBumpers) {
+			g2d.setStroke(new BasicStroke(2));
+			g2d.setColor(Color.GREEN);
+			for (MapVertex vertex : vertices) {
 				g2d.drawOval(camera.xAdjust(vertex.coordinate.x) - Player.trueRadius, camera.yAdjust(vertex.coordinate.y) - Player.trueRadius, Player.trueRadius * 2, Player.trueRadius * 2);
 			}
 		}

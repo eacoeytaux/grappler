@@ -5,7 +5,11 @@ import java.util.HashMap;
 public class Debug {
 	public static final boolean DEBUG = false;
 	
-	public static HashMap<String, String> log = new HashMap<String, String>();
+	public static HashMap<String, String> log;
+	
+	public static void init() {
+		log = new HashMap<String, String>();
+	}
 	
 	public static void logMessage(String tag, String message, boolean printMessage) { //TODO in C++, make optional printMessage parameter
 		message += "/n";

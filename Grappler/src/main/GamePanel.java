@@ -72,7 +72,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 						try {
 							Thread.sleep(100);
 						} catch (InterruptedException e) {
-							handleException(e);
+							Grappler.handleException(e);
 						}
 					} else {
 						start = System.nanoTime();
@@ -83,7 +83,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 							try {
 								Thread.sleep(wait);
 							} catch(Exception e) {
-								handleException(e);
+								Grappler.handleException(e);
 							}
 						} //else System.out.println("runningThread missed deadline! - Total:" + ++missedDeadlines);
 					}
@@ -102,7 +102,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 						try {
 							Thread.sleep(100);
 						} catch (InterruptedException e) {
-							handleException(e);
+							Grappler.handleException(e);
 						}
 					} else {
 						start = System.nanoTime();
@@ -113,7 +113,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 							try {
 								Thread.sleep(wait);
 							} catch(Exception e) {
-								handleException(e);
+								Grappler.handleException(e);
 							}
 						} //else System.out.println("graphicsThread missed deadline! - Total:" + ++missedDeadlines);
 					}
@@ -180,8 +180,4 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 
 	@Override
 	public void mouseReleased(MouseEvent e) { }
-
-	public static void handleException(Exception e) {
-		e.printStackTrace();
-	}
 }

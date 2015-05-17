@@ -16,6 +16,7 @@ import javax.imageio.ImageIO;
 import main.Constants;
 import main.Debug;
 import main.GamePanel;
+import main.Grappler;
 
 public class Player {
 
@@ -89,7 +90,7 @@ public class Player {
 		try { //load images
 			pattern = ImageIO.read(getClass().getResourceAsStream("/" + patternFileName));
 		} catch (IOException e) {
-			GamePanel.handleException(e);
+			Grappler.handleException(e);
 		}
 
 		setClipRegion();
