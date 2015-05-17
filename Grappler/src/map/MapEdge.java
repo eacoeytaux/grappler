@@ -52,30 +52,21 @@ public class MapEdge extends AbsMapElement {
 	}
 
 	public boolean adjustVector(Vector vector) {
-		double vectorAngle = vector.toLine().angle;
-		//if (vector.dx < 0) vectorAngle = (Math.PI / 2) - vectorAngle;
+		Line vectorLine = vector.toLine();
 
-		/*if (vectorAngle < 0) vectorAngle = (Math.PI * 2) + vectorAngle;
-		double lineAngle = line.angle;
-		if (lineAngle < 0) lineAngle = (Math.PI * 2) + lineAngle;*/
-
-		double adjustedValue = vectorAngle - line.angle;
-		if ((adjustedValue < 0) || (adjustedValue > Math.PI)) {
+		//angle which vector is entering slope
+		double adjustedAngle = (Math.PI / 2) - (vectorLine.angle - line.angle);
+		if ((adjustedAngle < 0) || (adjustedAngle > Math.PI)) {
 			//return false;
 		}
-
-		double tempAngle = (Math.PI / 2) - (vectorAngle - line.angle);//line.angle + ((Math.PI / 2) - vectorAngle);//Math.PI - (vectorAngle + line.angle);
-		//System.out.println(Math.toDegrees(vectorAngle));
 		
-		
-		//is correct
-		double newMag = Math.sin(tempAngle) * vector.getMagnitude();
+		//gets magntitude of adjusted vector
+		double newMag = Math.sin(adjustedAngle) * vector.getMagnitude();
 		if (vector.dx < 0) newMag *= -1;
-		//line.angle + ((Math.PI / 2) - vectorAngle)
 		
+		//breaks adjusted vector into x and y components
 		vector.dx = Math.cos(line.angle) * newMag * friction;
 		vector.dy = Math.sin(line.angle) * newMag * friction;
-
 		return true;
 	}
 }

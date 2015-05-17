@@ -6,10 +6,10 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 import main.Constants;
-import main.Grappler;
+import main.Debug;
 
 public class Map {
-	boolean showBumpers = Grappler.DEBUG;
+	boolean showBumpers = Debug.DEBUG;
 
 	ArrayList<AbsMapElement> elements;
 	ArrayList<MapVertex> vertices;
@@ -97,10 +97,20 @@ public class Map {
 				}
 			} else {
 				Coordinate coor = element.findTrapCollision(vectorLine);
-				if (coor != null) {
+				if (coor != null) { //TODO
+					System.out.println("collided with trap");
 					//at this point we know element is a MapEdge
-					//MapEdge edge = (MapEdge)element;
-					//TODO
+					MapEdge edge = (MapEdge)element;
+					double dist =  Constants.distance(coor, ((vel.dx > 0) ? edge.rightVertex.coordinate : edge.leftVertex.coordinate));
+					if (closestElement == null) {
+						closestElement = ((vel.dx > 0) ? edge.rightVertex : edge.leftVertex);
+						distanceToElement = dist;
+					} else {
+						if (dist < distanceToElement) {
+							closestElement = ((vel.dx > 0) ? edge.rightVertex : edge.leftVertex);
+							distanceToElement = dist;
+						}
+					}
 				}
 			}
 		}
@@ -121,8 +131,6 @@ public class Map {
 		rightVertex.leftEdge = mapEdge;
 		edges.add(mapEdge);
 		elements.add(mapEdge);
-
-		if (Grappler.DEBUG) System.out.println(mapEdge.id + " angle : " + Math.toDegrees(mapEdge.line.angle));
 
 		return mapEdge;
 	}

@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
 import main.Constants;
+import main.Debug;
 import main.GamePanel;
-import main.Grappler;
 
 public class Player {
 
@@ -112,14 +112,12 @@ public class Player {
 		vel.addVector(gravity);
 		if (movingRight) vel.addVector(rightPush);
 		if (movingLeft) vel.addVector(leftPush);
-		
-		//System.out.println(Math.toDegrees(vel.toLine().angle));
 
 		Vector tempVel = vel;//new Vector(vel.origin, vel.dx, vel.dy);
 		//double nextVelMag = vel.getMagnitude(); //TODO apply this to the next velocity
 
 		//TODO set magnitude of next velocity to appropriate magnitude
-		//while ((tempVel.dx != 0) || (tempVel.dy != 0)) {
+		while ((tempVel.dx != 0) || (tempVel.dy != 0)) {
 			double velMag = tempVel.getMagnitude();
 
 			//adjust velocity vector
@@ -127,7 +125,7 @@ public class Player {
 				currentElement.adjustVector(tempVel);
 			}
 			
-			System.out.println(tempVel.getMagnitude());
+			Debug.logMessage("playerVel", tempVel.getMagnitude());
 
 			AbsMapElement collidedElement = map.getCollision(tempVel, currentElement);
 
@@ -137,17 +135,12 @@ public class Player {
 				center.x = collisionCoor.x;
 				center.y = collisionCoor.y;
 				currentElement = collidedElement;
-				
-				//MapEdge edge = (MapEdge)collidedElement;
-				//rightPush = new Vector(null, Math.cos(edge.line.angle) * 0.1, 0);
-				//leftPush = new Vector(null, Math.cos(edge.line.angle) * -0.1, 0);
-				
 				tempVel = new Vector(collisionCoor, tempVel.dx * percentage, tempVel.dy * percentage);
 			} else { //no collision
 				addVectorToCenter(tempVel);
-				//break;
+				break;
 			}
-		//}
+		}
 
 
 		/*
@@ -220,7 +213,7 @@ public class Player {
 
 		drawWhiteCircle(g2d, camera, center, 1, 1);
 
-		if (!Grappler.DEBUG) {
+		if (!Debug.DEBUG) {
 			drawKaleidoscope(g2d, camera);
 		} else { //draws velocity vector
 			g2d.setStroke(new BasicStroke(1));

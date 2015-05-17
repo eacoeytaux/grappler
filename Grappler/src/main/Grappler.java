@@ -6,8 +6,6 @@ import javax.swing.JFrame;
 
 public class Grappler extends JFrame {
 	private static final long serialVersionUID = 1L;
-	
-	public static final boolean DEBUG = false;
 
 	public static void main(String[] args) {
 		JFrame window = new JFrame("Grappler");
