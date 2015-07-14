@@ -41,14 +41,11 @@ public class MapEdge extends AbsMapElement {
 		
 		if(right == null && left == null){
 			exitCoor = null;
-			System.out.println("none");
 		}
 		else if(right == null){
 			exitCoor = left;
-			System.out.println("left");
 		}else{
 			exitCoor = right;
-			System.out.println("right");
 		}
 		
 		return exitCoor;

@@ -20,7 +20,22 @@ public class MapVertex extends AbsMapElement {
 	}
 	
 	public boolean adjustVector(Vector vector) {
-		return true; //TODO something
+		Coordinate vertCenter = this.coordinate;
+		Coordinate contactPoint = new Coordinate( (this.coordinate.x + vector.origin.x) / 2 ,  (this.coordinate.y + vector.origin.y) / 2);
+		Line lineVertCenterToContact = new Line(vertCenter, contactPoint);
+		
+		double perpendicularAngle = lineVertCenterToContact.angle * (-1);
+
+		
+		double adjustedValue = vector.toLine().angle - perpendicularAngle;
+		if ((adjustedValue < 0) || (adjustedValue > Math.PI)) return false;
+		
+		double newMag = Math.sin(perpendicularAngle) * vector.getMagnitude();
+		
+		vector.dx = Math.sin(perpendicularAngle) * newMag;
+		vector.dy = Math.cos(perpendicularAngle) * newMag;
+		
+		return true;
 	}
 
 	public Coordinate checkExit(Line line) {
