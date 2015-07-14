@@ -7,6 +7,7 @@ public class MapVertex extends AbsMapElement {
 	public MapEdge leftEdge;
 	
 	public MapVertex(Map map, Coordinate coordinate) {
+		super("Vertex");
 		this.parent = map;
 		this.coordinate = coordinate;
 	}
@@ -17,6 +18,10 @@ public class MapVertex extends AbsMapElement {
 	
 	public Coordinate findCollision(Line line) {
 		return null; //TODO something
+	}
+	
+	public Coordinate findTrapCollision(Line line) {
+		return null; //TODO maybe something? maybe keep null...
 	}
 	
 	public boolean adjustVector(Vector vector) {
@@ -43,9 +48,5 @@ public class MapVertex extends AbsMapElement {
 		return null;
 	}
 
-	@Override
-	public AbsMapElement getExitElement(Line line) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 }

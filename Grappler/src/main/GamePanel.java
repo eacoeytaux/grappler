@@ -17,18 +17,20 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 	public final int WIDTH = 960;
 	public final int HEIGHT = 640;
 
-	public final int FPS = 60;
+	public final int FPS = 60; //aiming for 60
 	public final long targetTime = 1000 / FPS;
-	
+
 	GamePanel self;
 	Thread thread;
 	Thread runningThread;
 	Thread graphicsThread;
 	boolean running;
-	
+
+	boolean paused;
+
 	int runningMissedDeadlines;
 	int graphicsMissedDeadlines;
-	
+
 	Engine engine;
 	BufferedImage image;
 
@@ -38,6 +40,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 		setPreferredSize(new Dimension(WIDTH, HEIGHT));
 		setFocusable(true);
 		requestFocus();
+
+		engine = new Engine(self);
 	}
 
 	@Override
@@ -55,7 +59,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 	@Override
 	public void run() {
 		running = true;
-		engine = new Engine(self);
+		paused = false;
 
 		runningThread = new Thread() {
 			@Override
@@ -64,21 +68,29 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 				int missedDeadlines = 0;
 				long start, elapsed, wait;
 				while (running) {
-					start = System.nanoTime();
-					engine.update();
-					elapsed = System.nanoTime() - start;
-					wait = targetTime - (elapsed / 1000000);
-					if (wait >= 0) {
+					if (paused) {
 						try {
-							Thread.sleep(wait);
-						} catch(Exception e) {
-							handleException(e);
+							Thread.sleep(100);
+						} catch (InterruptedException e) {
+							Grappler.handleException(e);
 						}
-					} //else System.out.println("runningThread missed deadline! - Total:" + ++missedDeadlines);
+					} else {
+						start = System.nanoTime();
+						engine.update();
+						elapsed = System.nanoTime() - start;
+						wait = targetTime - (elapsed / 1000000);
+						if (wait >= 0) {
+							try {
+								Thread.sleep(wait);
+							} catch(Exception e) {
+								Grappler.handleException(e);
+							}
+						} //else System.out.println("runningThread missed deadline! - Total:" + ++missedDeadlines);
+					}
 				}
 			}
 		};
-		
+
 		graphicsThread = new Thread() {
 			@Override
 			public void run() {
@@ -86,23 +98,48 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 				int missedDeadlines = 0;
 				long start, elapsed, wait;
 				while (running) {
-					start = System.nanoTime();
-					updateScreen();
-					elapsed = System.nanoTime() - start;
-					wait = targetTime - (elapsed / 1000000);
-					if (wait >= 0) {
+					if (paused) {
 						try {
-							Thread.sleep(wait);
-						} catch(Exception e) {
-							handleException(e);
+							Thread.sleep(100);
+						} catch (InterruptedException e) {
+							Grappler.handleException(e);
 						}
-					} //else System.out.println("graphicsThread missed deadline! - Total:" + ++missedDeadlines);
+					} else {
+						start = System.nanoTime();
+						updateScreen();
+						elapsed = System.nanoTime() - start;
+						wait = targetTime - (elapsed / 1000000);
+						if (wait >= 0) {
+							try {
+								Thread.sleep(wait);
+							} catch(Exception e) {
+								Grappler.handleException(e);
+							}
+						} //else System.out.println("graphicsThread missed deadline! - Total:" + ++missedDeadlines);
+					}
 				}
 			}
 		};
-		
+
 		runningThread.start();
 		graphicsThread.start();
+	}
+
+	public void pause() {
+		/*if (!paused) {
+			running = false;
+			try {
+				runningThread.wait();
+				graphicsThread.wait();
+			} catch (InterruptedException e) {
+				handleException(e);
+			}
+		} else {
+			running = true;
+			runningThread.notify();
+			graphicsThread.notify();
+		}*/
+		paused = !paused;
 	}
 
 	public void updateScreen() {
@@ -117,11 +154,14 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 
 	@Override
 	public void keyPressed(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_P) pause();
 		engine.keyPressed(e);
 	}
 
 	@Override
-	public void keyReleased(KeyEvent e) { }
+	public void keyReleased(KeyEvent e) {
+		engine.keyReleased(e);
+	}
 
 	@Override
 	public void keyTyped(KeyEvent e) { }
@@ -140,8 +180,4 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 
 	@Override
 	public void mouseReleased(MouseEvent e) { }
-	
-	public static void handleException(Exception e) {
-		e.printStackTrace();
-	}
 }

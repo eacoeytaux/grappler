@@ -3,6 +3,9 @@ package map;
 
 public class Line {
 	double angle; //in radians
+	double angleSin;
+	double angleCos;
+	
 	Coordinate coor1; //left-most coordinate
 	Coordinate coor2; //right-most coordinate
 	double m;
@@ -43,6 +46,9 @@ public class Line {
 			m = (y2 - y1) / (x2 - x1);
 			b = y1 - (m * x1);
 			angle = Math.atan(m);
+			//if (angle < 0) angle += Math.PI * 2;
+			angleSin = Math.sin(angle);
+			angleCos = Math.cos(angle);
 			xAdjustment = Math.cos(angle);
 			yAdjustment = Math.sin(angle);
 		} else {
@@ -50,6 +56,8 @@ public class Line {
 			m = 0;
 			b = 0;
 			angle = Math.PI / 2;
+			angleSin = 1;
+			angleCos = 0;
 			xAdjustment = 1;
 			yAdjustment = 0;
 		}
@@ -96,11 +104,13 @@ public class Line {
 	}
 	
 	public double getPerpendicularDx(double distance) {
-		return yAdjustment * distance;
+		if (vertical) return distance;
+		else return yAdjustment * distance;
 	}
 	
 	public double getPerpendicularDy(double distance) {
-		return xAdjustment * -distance;
+		if (vertical) return 0;
+		else return xAdjustment * -distance;
 	}
 		
 		/*

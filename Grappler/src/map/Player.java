@@ -14,7 +14,9 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
 import main.Constants;
+import main.Debug;
 import main.GamePanel;
+import main.Grappler;
 
 public class Player {
 
@@ -31,7 +33,12 @@ public class Player {
 
 	double velocityMagnitude;
 
-	Vector gravity;
+	Vector gravity = new Vector(null, 0, 0.1);
+	
+	Vector rightPush = new Vector(null, 0.1, 0);
+	Vector leftPush = new Vector(null, -0.1, 0);
+	boolean movingRight;
+	boolean movingLeft;
 
 	AbsMapElement currentElement;
 
@@ -41,16 +48,25 @@ public class Player {
 	double aimerAngle;
 	static final int aimerRadius = 72;
 
-	static final int borderWidth = 8;
-	static final int trueRadius = 32;
-	static final int colorRadius = trueRadius - borderWidth;
-	static final int barRadius = colorRadius + 4;
-
-	int[] xPoints = {0, colorRadius, (int)(0.70710678118 * colorRadius)};
-	int[] yPoints = {0, 0, (int)(0.70710678118 * colorRadius)};
+	static final int borderWidth = 6;
+	static final int trueRadius = 40;
+	static final int kaleidoscopeRadius = trueRadius - borderWidth;
+	static final int kaleidoscopeBufferWidth = 2;
+	static final int barRadius = kaleidoscopeRadius + 3;
 
 	float barPercentage;
 	float barIncreaseSpeed = 0.005f;
+
+	int energyRedValue = 0;
+	Color energyColor = Color.BLACK;
+
+	int[] xPoints;
+	int[] yPoints;
+
+	double segments = 8;
+	int kaleidoscopeSpeed = 2;
+	String patternFileName = "pattern-5.jpg";
+	BufferedImage pattern;
 
 	public Player(Color color, Coordinate center) {
 		this.center = center;
@@ -66,13 +82,20 @@ public class Player {
 		aimerAngle = 0;
 
 		vel = new Vector(center, 0, 0);
-		gravity = new Vector(null, 0, 0.2);
 
 		currentElement = null;
 
 		barPercentage = 0;
+
+		try { //load images
+			pattern = ImageIO.read(getClass().getResourceAsStream("/" + patternFileName));
+		} catch (IOException e) {
+			Grappler.handleException(e);
+		}
+
+		setClipRegion();
 	}
-	
+
 	public void update(Map map, long counter) {
 		//if (true) return;
 
@@ -88,8 +111,10 @@ public class Player {
 
 		//add forces to velocity
 		vel.addVector(gravity);
+		if (movingRight) vel.addVector(rightPush);
+		if (movingLeft) vel.addVector(leftPush);
 
-		Vector tempVel = new Vector(vel.origin, vel.dx, vel.dy);
+		Vector tempVel = vel;//new Vector(vel.origin, vel.dx, vel.dy);
 		//double nextVelMag = vel.getMagnitude(); //TODO apply this to the next velocity
 
 		//TODO set magnitude of next velocity to appropriate magnitude
@@ -98,16 +123,10 @@ public class Player {
 
 			//adjust velocity vector
 			if (currentElement != null) {
-				Coordinate exitCoor = currentElement.checkExit(tempVel.toLine());
-				
-				if(exitCoor != null){
-					currentElement = currentElement.getExitElement(tempVel.toLine());
-					//tempVel = new Vector(exitCoor, 5, 5);
-				}
-				System.out.println("going well1");
-				
 				currentElement.adjustVector(tempVel);
 			}
+			
+			Debug.logMessage("playerVel", tempVel.getMagnitude());
 
 			AbsMapElement collidedElement = map.getCollision(tempVel, currentElement);
 
@@ -137,6 +156,15 @@ public class Player {
 		angle %= Math.PI * 2;
 		center.y += vel.yDelta;
 		 */
+
+		//kaleidoscope
+		if ((counter % kaleidoscopeSpeed) == 0) {
+			for (int i = 0; i < xPoints.length; i++) {
+				xPoints[i] += 1;
+				//yPoints[i] += 1;
+			}
+			if (xPoints[2] >= pattern.getWidth()) setClipRegion();
+		}
 	}
 
 	public void addVectorToCenter(Vector vector) {
@@ -149,8 +177,7 @@ public class Player {
 	}
 
 	public void draw(Graphics2D g2d, Camera camera) {
-
-		float percentage = 1f;
+		float percentage = 1f; //TODO make these global
 		float percentageDecreaseValue = 0.05f;
 		float opacity = 0.02f * 8f;
 		float opacityDecreaseValue = 0.02f;
@@ -161,21 +188,31 @@ public class Player {
 			if (percentage < 0) percentage = 0;
 			if (opacity < 0) opacity = 0;
 
-			drawCircleOutline(g2d, camera, coor, percentage, opacity);
+			drawFullCircle(g2d, camera, coor, percentage, opacity);
 			//drawCircle(g2d, camera, coor, percentage, opacity);
 		}
 
-		drawCircleOutline(g2d, camera, center, 1, 1);
+		drawFullCircle(g2d, camera, center, 1, 1);
 
-		g2d.setColor(Color.BLACK);
+		if (energyRedValue > 0) {
+			energyRedValue -= 3;
+			if (energyRedValue < 0) energyRedValue = 0;
+			energyColor = new Color(energyRedValue, 0, 0);
+		}
+
+		g2d.setColor(energyColor);
 		g2d.setStroke(new BasicStroke(3));
 		g2d.fillArc(camera.xAdjust(center.x - barRadius), camera.yAdjust(center.y - barRadius), barRadius * 2, barRadius * 2, (int)Math.toDegrees(-angle), (int)(-barPercentage * 360));
 
-		drawCircle(g2d, camera, center, 1, 1);
+		drawWhiteCircle(g2d, camera, center, 1, 1);
 
-		//g2d.setColor(color);
-		//g2d.drawLine((int)center.x, (int)center.y, (int)(center.x + (colorRadius * Math.cos(angle))), (int)(center.y + (colorRadius * Math.sin(angle))));
-
+		if (!Debug.DEBUG) {
+			drawKaleidoscope(g2d, camera);
+		} else { //draws velocity vector
+			g2d.setStroke(new BasicStroke(1));
+			g2d.setColor(Color.BLACK);
+			g2d.drawLine((int)vel.origin.x, (int)vel.origin.y, (int)(vel.origin.x + vel.dx * 10), (int)(vel.origin.y + vel.dy * 10));
+		}
 
 		//draw aimer
 		if (drawAimer) {
@@ -193,59 +230,9 @@ public class Player {
 			Coordinate aimerCoor = center.clone(Math.cos(aimerAngle) * aimerRadius, Math.sin(aimerAngle) * aimerRadius);
 			g2d.drawOval(camera.xAdjust(aimerCoor.x - 8), camera.yAdjust(aimerCoor.y - 8), 16, 16);
 		}
-
-		BufferedImage image = null;
-		
-		try { //load images
-			image = ImageIO.read(getClass().getResourceAsStream("/pattern-1.png"));
-		} catch (IOException e) {
-			GamePanel.handleException(e);
-		}
-
-		Polygon triangle = new Polygon(xPoints, yPoints, 3);
-		BufferedImage segment = new BufferedImage(400, 400, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g = (Graphics2D)segment.getGraphics();
-		g.setClip(triangle);
-
-		for (int i = 0; i < 3; i++) {
-			xPoints[i] += 1;
-			yPoints[i] += 1;
-		}
-
-		if (xPoints[2] >= image.getWidth()) {
-			xPoints = new int[]{0, colorRadius, (int)(0.70710678118 * colorRadius)};
-			yPoints = new int[]{0, 0, (int)(0.70710678118 * colorRadius)};
-		}
-
-		g.drawImage(image, 0, 0, null);
-		g.dispose();
-
-		BufferedImage kal = new BufferedImage(colorRadius * 2, colorRadius * 2, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g2 = (Graphics2D)kal.getGraphics();
-
-		AffineTransform tx = AffineTransform.getRotateInstance(-Math.PI / 2, segment.getWidth() / 2, segment.getHeight() / 2);
-		AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
-
-		g2.drawImage(segment, colorRadius - xPoints[0], colorRadius - yPoints[0], segment.getWidth(), segment.getHeight(), null);
-		g2.drawImage(segment, colorRadius - xPoints[0], (colorRadius - yPoints[0]) + yPoints[0] * 2, segment.getWidth(), -segment.getHeight(), null);
-		g2.drawImage(segment, (colorRadius - xPoints[0]) + xPoints[0] * 2, colorRadius - yPoints[0], -segment.getWidth(), segment.getHeight(), null);
-		g2.drawImage(segment, (colorRadius - xPoints[0]) + xPoints[0] * 2, (colorRadius - yPoints[0]) + yPoints[0] * 2, -segment.getWidth(), -segment.getHeight(), null);
-
-		BufferedImage segment2 = op.filter(segment, null);
-		g2.drawImage(segment2, colorRadius - xPoints[0], ((colorRadius - yPoints[0]) + yPoints[0] * 2) - 400, segment2.getWidth(), segment2.getHeight(), null);
-		g2.drawImage(segment2, colorRadius - xPoints[0], (colorRadius - yPoints[0]) + 400, segment2.getWidth(), -segment2.getHeight(), null);
-		g2.drawImage(segment2, (colorRadius - xPoints[0]) + xPoints[0] * 2, ((colorRadius - yPoints[0]) + yPoints[0] * 2) - 400, -segment2.getWidth(), segment2.getHeight(), null);
-		g2.drawImage(segment2, (colorRadius - xPoints[0]) + xPoints[0] * 2, (colorRadius - yPoints[0]) + 400, -segment2.getWidth(), -segment2.getHeight(), null);
-		
-		tx = AffineTransform.getRotateInstance(angle, kal.getWidth() / 2, kal.getHeight() / 2);
-		op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
-		
-		kal = op.filter(kal, null);
-		
-		g2d.drawImage(kal, (int)center.x - colorRadius, (int)center.y - colorRadius, null);
 	}
 
-	public void drawCircleOutline(Graphics2D g2d, Camera camera, Coordinate center, float percentage, float opacity) {
+	public void drawFullCircle(Graphics2D g2d, Camera camera, Coordinate center, float percentage, float opacity) {
 		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
 		g2d.setColor(color);
 
@@ -254,12 +241,72 @@ public class Player {
 
 	}
 
-	public void drawCircle(Graphics2D g2d, Camera camera, Coordinate center, float percentage, float opacity) {
+	public void drawWhiteCircle(Graphics2D g2d, Camera camera, Coordinate center, float percentage, float opacity) {
 		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
 		g2d.setColor(Color.WHITE);
 
-		int tempRadius = (int)(colorRadius * percentage);
+		int tempRadius = (int)(kaleidoscopeRadius * percentage);
 		g2d.fillOval(camera.xAdjust(center.x - tempRadius), camera.yAdjust(center.y - tempRadius), tempRadius * 2, tempRadius * 2);
 
 	}
+
+	public void drawKaleidoscope(Graphics2D g2d, Camera camera) {
+		//kaleidoscope image (side note - how is this word not in the eclipse dictionary??)
+		BufferedImage kaleidoscope = new BufferedImage(kaleidoscopeRadius * 2, kaleidoscopeRadius * 2, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D gKaleidoscope = (Graphics2D)kaleidoscope.getGraphics();
+
+		//sometimes there is a hole in the center of kaleidoscope, this fills that color with player color
+		//gKaleidoscope.setColor(color);
+		//gKaleidoscope.fillOval(kaleidoscopeRadius - 4, kaleidoscopeRadius - 4, 8, 8);
+
+		//clips half segment from pattern
+		Polygon triangle = new Polygon(xPoints, yPoints, 3);
+		BufferedImage halfSegment = new BufferedImage(pattern.getWidth(), pattern.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		Graphics2D gHalfSeg = (Graphics2D)halfSegment.getGraphics();
+		gHalfSeg.setClip(triangle);
+		gHalfSeg.drawImage(pattern, 0, 0, null);
+		gHalfSeg.dispose();
+
+		//full segment image 
+		BufferedImage segment = new BufferedImage(kaleidoscopeRadius * 2, kaleidoscopeRadius * 2, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D gSegment = (Graphics2D)segment.getGraphics();
+
+		gSegment.drawImage(halfSegment, kaleidoscopeRadius - xPoints[0], kaleidoscopeRadius - yPoints[0], halfSegment.getWidth(), halfSegment.getHeight(), null);
+		gSegment.drawImage(halfSegment, ((kaleidoscopeRadius - xPoints[0]) + xPoints[0] * 2), kaleidoscopeRadius - yPoints[0], -halfSegment.getWidth(), halfSegment.getHeight(), null);
+		gSegment.dispose();
+		
+		AffineTransform tx = AffineTransform.getRotateInstance(-Math.PI / (segments / 2), segment.getWidth() / 2, segment.getHeight() / 2);
+		AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+
+		//fills kaleidoscope with segments
+		for (int i = 0; i < segments; i++) {
+			segment = op.filter(segment, null);
+			gKaleidoscope.drawImage(segment, 0, 0, null);
+		}
+		gKaleidoscope.dispose();
+
+		//rotates kaleidoscope to angle
+		tx = AffineTransform.getRotateInstance(angle, kaleidoscope.getWidth() / 2, kaleidoscope.getHeight() / 2);
+		op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
+		kaleidoscope = op.filter(kaleidoscope, null);
+		
+		//draws kaleidoscope to screen
+		g2d.drawImage(kaleidoscope, camera.xAdjust(center.x) - kaleidoscopeRadius, camera.yAdjust(center.y) - kaleidoscopeRadius, null);
+	}
+
+	public void setClipRegion() {
+		int radius = kaleidoscopeRadius - kaleidoscopeBufferWidth;
+		yPoints = new int[]{0, radius, (int)(Math.cos(Math.toRadians(90f / (segments / 2))) * radius)};
+		xPoints = new int[]{0, 0, (int)(Math.sin(Math.toRadians(90f / (segments / 2))) * radius)};
+	}
+	
+	public void setMovingRight(boolean b) {
+		movingRight = b;
+	}
+	
+	public void setMovingLeft(boolean b) {
+		movingLeft = b;
+	}
 }
+
+
