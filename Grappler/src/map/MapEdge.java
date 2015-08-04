@@ -10,7 +10,7 @@ public class MapEdge extends AbsMapElement {
 	public Line rightCatchLine;
 	public Line leftCatchLine;
 	public boolean hookable;
-	public float friction = 0.99f;
+	public float friction = .99f;
 
 	public MapEdge(Map map, MapVertex leftVertex, MapVertex rightVertex, boolean hookable) {
 		super("Edge");
@@ -24,9 +24,9 @@ public class MapEdge extends AbsMapElement {
 				line.coor2.x + line.getPerpendicularDx(Player.trueRadius),
 				line.coor2.y + line.getPerpendicularDy(Player.trueRadius));
 		//backBumperLine = new Line(line.coor1.x + line.getPerpendicularDx(-Player.trueRadius),
-				//line.coor1.y + line.getPerpendicularDy(-Player.trueRadius),
-				//line.coor2.x + line.getPerpendicularDx(-Player.trueRadius),
-				//line.coor2.y + line.getPerpendicularDy(-Player.trueRadius));
+		//line.coor1.y + line.getPerpendicularDy(-Player.trueRadius),
+		//line.coor2.x + line.getPerpendicularDx(-Player.trueRadius),
+		//line.coor2.y + line.getPerpendicularDy(-Player.trueRadius));
 
 		int catchSize = 5;
 		leftCatchLine = new Line(line.coor1.x + line.getPerpendicularDx(Player.trueRadius + catchSize),
@@ -42,15 +42,21 @@ public class MapEdge extends AbsMapElement {
 	}
 
 	public Coordinate findCollision(Line line) {
-		return bumper.intersection(line);
+		Coordinate collisionCoordinate =  bumper.intersection(line);
+
+		//need to check if colliding from front or back of bumper
+		
+		return collisionCoordinate;
+
 	}
 
 	public Coordinate findTrapCollision(Line line) {
 		Coordinate coor = rightCatchLine.intersection(line);
 		if (coor == null) coor = leftCatchLine.intersection(line);
+
 		return coor;
 	}
-	
+
 	public boolean adjustVector(Vector vector) {
 		Line vectorLine = vector.toLine();
 
@@ -59,15 +65,15 @@ public class MapEdge extends AbsMapElement {
 		if ((adjustedAngle < 0) || (adjustedAngle > Math.PI)) {
 			//return false;
 		}
-		
+
 		//gets magntitude of adjusted vector
 		double newMag = Math.sin(adjustedAngle) * vector.getMagnitude();
 		if (vector.dx < 0) newMag *= -1;
-		
+
 		//breaks adjusted vector into x and y components
 		vector.dx = Math.cos(line.angle) * newMag * friction;
 		vector.dy = Math.sin(line.angle) * newMag * friction;
 		return true;
 	}
-	
+
 }

@@ -80,6 +80,7 @@ public class Map {
 		Line vectorLine = vel.toLine();
 
 		for (AbsMapElement element : elements) {
+			//check all non-current elements
 			if (element != currentElement) {
 				Coordinate coor = element.findCollision(vectorLine);
 				if(coor != null){
@@ -94,10 +95,9 @@ public class Map {
 						}
 					}
 				}
-			} else {
+			} else { //check vertices of current edge
 				Coordinate coor = element.findTrapCollision(vectorLine);
-				if (coor != null) { //TODO
-					System.out.println("collided with trap");
+				if (coor != null) {
 					//at this point we know element is a MapEdge
 					MapEdge edge = (MapEdge)element;
 					double dist =  Constants.distance(coor, ((vel.dx > 0) ? edge.rightVertex.coordinate : edge.leftVertex.coordinate));

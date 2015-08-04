@@ -97,6 +97,7 @@ public class Player {
 	}
 
 	public void update(Map map, long counter) {
+		
 		//if (true) return;
 
 		//energy
@@ -128,10 +129,14 @@ public class Player {
 			
 			Debug.logMessage("playerVel", tempVel.getMagnitude());
 
+			//holds an element with which a collision is detected.  if no collision, null
 			AbsMapElement collidedElement = map.getCollision(tempVel, currentElement);
 
 			if (collidedElement != null) { //collision detected
 				Coordinate collisionCoor = collidedElement.findCollision(tempVel.toLine());
+				//temporarily allows for collisions with vertex when on a line.  will not work if colliding straight into vertex
+				//if( collisionCoor == null ) collisionCoor = currentElement.findTrapCollision(tempVel.toLine());
+				
 				float percentage = 1f - (float)Constants.distance(tempVel.origin, collisionCoor) / (float)velMag;
 				center.x = collisionCoor.x;
 				center.y = collisionCoor.y;

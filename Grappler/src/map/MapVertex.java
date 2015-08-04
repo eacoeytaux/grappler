@@ -17,7 +17,9 @@ public class MapVertex extends AbsMapElement {
 	}
 	
 	public Coordinate findCollision(Line line) {
-		return null; //TODO something
+		Circle vertexBumper = new Circle(coordinate, Player.trueRadius );
+		return vertexBumper.intersection(line);
+		//return null;
 	}
 	
 	public Coordinate findTrapCollision(Line line) {
